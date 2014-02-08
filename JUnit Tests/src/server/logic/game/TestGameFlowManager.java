@@ -1,9 +1,9 @@
 package server.logic.game;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.junit.After;
@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import server.logic.exceptions.NoMoreTilesException;
 import common.Constants;
 import common.Constants.BuildableBuilding;
 import common.Constants.RegularPhase;
@@ -292,26 +293,77 @@ public class TestGameFlowManager {
 		assertEquals(0,p4.getTrayThings().size());
 		assertEquals(11,p4.getOwnedThingsOnBoard().size());
 		game.endPlayerTurn(p4.getID());
+
+		assertEquals(SetupPhase.EXCHANGE_THINGS,game.getCurrentState().getCurrentSetupPhase());
 	}
 
 	@Test
-	public void testExchangeThings() {
-		fail("Not yet implemented");
+	public void testAdvanceToRegularPlay() {
+		testPlaceThingOnBoard();
+		
+		//skip exchange things phase
+		game.endPlayerTurn(p1.getID());
+		game.endPlayerTurn(p2.getID());
+		game.endPlayerTurn(p3.getID());
+		game.endPlayerTurn(p4.getID());
+
+		//skip place exchanged things phase
+		game.endPlayerTurn(p1.getID());
+		game.endPlayerTurn(p2.getID());
+		game.endPlayerTurn(p3.getID());
+		game.endPlayerTurn(p4.getID());
+		
+		assertEquals(14,p1.getGold());
+		assertEquals(14,p2.getGold());
+		assertEquals(14,p3.getGold());
+		assertEquals(14,p4.getGold());
+
+		assertEquals(0,p1.getTrayThings().size());
+		assertEquals(0,p2.getTrayThings().size());
+		assertEquals(0,p3.getTrayThings().size());
+		assertEquals(0,p4.getTrayThings().size());
+		
+		assertEquals(SetupPhase.SETUP_FINISHED, game.getCurrentState().getCurrentSetupPhase());
+		assertEquals(RegularPhase.RECRUITING_CHARACTERS,game.getCurrentState().getCurrentRegularPhase());
+		assertEquals(p1.getID(),game.getCurrentState().getActivePhasePlayer().getID());
+		assertEquals(p1.getID(),game.getCurrentState().getActiveTurnPlayer().getID());
 	}
 
 	@Test
-	public void testExchangeSeaHex() {
-		fail("Not yet implemented");
-	}
+	public void testRecruitingThings() throws NoMoreTilesException {
+		testAdvanceToRegularPlay();
+		
+		//skip recruiting characters phase
+		game.endPlayerTurn(p1.getID());
+		game.endPlayerTurn(p2.getID());
+		game.endPlayerTurn(p3.getID());
+		game.endPlayerTurn(p4.getID());
 
-	@Test
-	public void testEndPlayerTurn() {
-		fail("Not yet implemented");
-	}
+		assertEquals(0,p1.getTrayThings().size());
+		assertEquals(0,p2.getTrayThings().size());
+		assertEquals(0,p3.getTrayThings().size());
+		assertEquals(0,p4.getTrayThings().size());
+		
+		assertEquals(SetupPhase.SETUP_FINISHED, game.getCurrentState().getCurrentSetupPhase());
+		assertEquals(RegularPhase.RECRUITING_THINGS,game.getCurrentState().getCurrentRegularPhase());
+		assertEquals(p1.getID(),game.getCurrentState().getActivePhasePlayer().getID());
+		assertEquals(p1.getID(),game.getCurrentState().getActiveTurnPlayer().getID());
+		
+		game.recruitThings(0, new ArrayList<TileProperties>(), p1.getID());
+		assertEquals(2,p1.getTrayThings().size());
+		game.endPlayerTurn(p1.getID());
+		
+		game.recruitThings(0, new ArrayList<TileProperties>(), p2.getID());
+		assertEquals(2,p2.getTrayThings().size());
+		game.endPlayerTurn(p2.getID());
 
-	@Test
-	public void testPaidRecruits() {
-		fail("Not yet implemented");
+		game.recruitThings(0, new ArrayList<TileProperties>(), p3.getID());
+		assertEquals(2,p3.getTrayThings().size());
+		game.endPlayerTurn(p3.getID());
+
+		game.recruitThings(0, new ArrayList<TileProperties>(), p4.getID());
+		assertEquals(2,p4.getTrayThings().size());
+		game.endPlayerTurn(p4.getID());
 	}
 
 	private void assertPlayerAtIndexIsActiveForPhase(int index)

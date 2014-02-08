@@ -58,6 +58,7 @@ public class TestPlayer {
 
 	@Test(expected=IllegalArgumentException.class)
 	public void testAddGold2() {
+		p.addGold(6);
 		p.addGold(-1);
 	}
 
