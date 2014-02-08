@@ -349,8 +349,17 @@ public class TestGameFlowManager {
 		assertEquals(p1.getID(),game.getCurrentState().getActivePhasePlayer().getID());
 		assertEquals(p1.getID(),game.getCurrentState().getActiveTurnPlayer().getID());
 		
-		game.recruitThings(0, new ArrayList<TileProperties>(), p1.getID());
-		assertEquals(2,p1.getTrayThings().size());
+		game.recruitThings(5, new ArrayList<TileProperties>(), p1.getID());
+		assertEquals(3,p1.getTrayThings().size());
+
+		String[] stackTwoNames = {"Cyclops","Mountain_Men","Goblins"};
+		for(String s : stackTwoNames)
+		{
+			game.placeThingOnBoard(getPlayerTrayThingByName(s,p1), p1.getID(), game.getCurrentState().getBoard().getHexByXY(4, 3).getHex());
+		}
+		assertEquals(0,p1.getTrayThings().size());
+		assertEquals(14,p1.getOwnedThingsOnBoard().size());
+		
 		game.endPlayerTurn(p1.getID());
 		
 		game.recruitThings(0, new ArrayList<TileProperties>(), p2.getID());
