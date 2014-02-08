@@ -354,6 +354,7 @@ public class TestGameFlowManager {
 		
 		game.recruitThings(5, new ArrayList<TileProperties>(), p1.getID());
 		assertEquals(3,p1.getTrayThings().size());
+		assertEquals(9,p1.getGold());
 
 		String[] stackTwoNames = {"Cyclops","Mountain_Men","Goblins"};
 		for(String s : stackTwoNames)
@@ -473,14 +474,73 @@ public class TestGameFlowManager {
 		game.endPlayerTurn(p4.getID());
 	}
 	
+	@Test
+	public void testTurnTwoIncome()
+	{
+		testExploration();
+
+		//skip construction phase
+		game.endPlayerTurn(p1.getID());
+		game.endPlayerTurn(p2.getID());
+		game.endPlayerTurn(p3.getID());
+		game.endPlayerTurn(p4.getID());
+
+		//skip special powers phase
+		game.endPlayerTurn(p1.getID());
+		game.endPlayerTurn(p2.getID());
+		game.endPlayerTurn(p3.getID());
+		game.endPlayerTurn(p4.getID());
+		
+		assertEquals(RegularPhase.RECRUITING_CHARACTERS, game.getCurrentState().getCurrentRegularPhase());
+		assertEquals(p2.getID(), game.getCurrentState().getActivePhasePlayer().getID());
+		assertEquals(p2.getID(), game.getCurrentState().getActiveTurnPlayer().getID());
+
+		assertEquals(14,p1.getGold());
+		assertEquals(19,p2.getGold());
+		assertEquals(18,p3.getGold());
+		assertEquals(18,p4.getGold());
+	}
+
+	@Test
+	public void testTurnTwoRecruitment() throws NoMoreTilesException
+	{
+		testTurnTwoIncome();
+
+		//skip recruit characters phase
+		game.endPlayerTurn(p2.getID());
+		game.endPlayerTurn(p3.getID());
+		game.endPlayerTurn(p4.getID());
+		game.endPlayerTurn(p1.getID());
+		
+		assertEquals(RegularPhase.RECRUITING_THINGS, game.getCurrentState().getCurrentRegularPhase());
+		assertEquals(p2.getID(), game.getCurrentState().getActivePhasePlayer().getID());
+		assertEquals(p2.getID(), game.getCurrentState().getActiveTurnPlayer().getID());
+		
+		game.recruitThings(0, new ArrayList<TileProperties>(), p2.getID());
+		assertEquals(4,p2.getTrayThings().size());
+		game.endPlayerTurn(p2.getID());
+
+		game.recruitThings(0, new ArrayList<TileProperties>(), p3.getID());
+		assertEquals(4,p3.getTrayThings().size());
+		game.endPlayerTurn(p3.getID());
+
+		game.recruitThings(0, new ArrayList<TileProperties>(), p4.getID());
+		assertEquals(4,p4.getTrayThings().size());
+		game.endPlayerTurn(p4.getID());
+
+		game.recruitThings(0, new ArrayList<TileProperties>(), p1.getID());
+		assertEquals(2,p1.getTrayThings().size());
+		game.endPlayerTurn(p1.getID());
+	}
+	
 	private void assertPlayerAtIndexIsActiveForPhase(int index)
 	{
-		assertEquals(game.getCurrentState().getActivePhasePlayer().getID(),game.getCurrentState().getPlayerOrder().get(index).intValue());
+		assertEquals(game.getCurrentState().getPlayerOrder().get(index).intValue(),game.getCurrentState().getActivePhasePlayer().getID());
 	}
 
 	private void assertPlayerAtIndexIsActiveForTurn(int index)
 	{
-		assertEquals(game.getCurrentState().getActiveTurnPlayer().getID(),game.getCurrentState().getPlayerOrder().get(index).intValue());
+		assertEquals(game.getCurrentState().getPlayerOrder().get(index).intValue(),game.getCurrentState().getActiveTurnPlayer().getID());
 	}
 	
 	private Player getPlayerAtIndex(int index)
