@@ -1,6 +1,7 @@
 package server.logic.game;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.awt.Point;
 import java.util.HashSet;
@@ -12,10 +13,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import common.Constants;
-import common.LoadResources;
+import common.Constants.BuildableBuilding;
 import common.Constants.RegularPhase;
 import common.Constants.SetupPhase;
+import common.LoadResources;
 import common.PlayerInfo;
+import common.TileProperties;
 
 public class TestGameFlowManager {
 	
@@ -158,37 +161,137 @@ public class TestGameFlowManager {
 		assertPlayerAtIndexIsActiveForPhase(0);
 		assertPlayerAtIndexIsActiveForTurn(0);
 		
-		assertEquals(3,p1.getOwnedHexes().size());
-		assertEquals(3,p2.getOwnedHexes().size());
-		assertEquals(3,p3.getOwnedHexes().size());
-		assertEquals(3,p4.getOwnedHexes().size());
-
-		assertEquals(true,p1.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(SECOND_SPOT.x, SECOND_SPOT.y).getHex()));
-		assertEquals(true,p2.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(FOURTH_SPOT.x, FOURTH_SPOT.y).getHex()));
-		assertEquals(true,p3.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(THIRD_SPOT.x, THIRD_SPOT.y).getHex()));
-		assertEquals(true,p4.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(FIRST_SPOT.x, FIRST_SPOT.y).getHex()));
-
-		assertEquals(true,p1.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(4, 3).getHex()));
-		assertEquals(true,p2.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(5, 8).getHex()));
-		assertEquals(true,p3.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(1, 8).getHex()));
-		assertEquals(true,p4.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(2, 3).getHex()));
-		
-		assertEquals(true,p1.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(4, 5).getHex()));
-		assertEquals(true,p2.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(6, 7).getHex()));
-		assertEquals(true,p3.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(2, 9).getHex()));
-		assertEquals(true,p4.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(1, 4).getHex()));
+		validateThirdHexGivenState();
 		
 		assertEquals(SetupPhase.PLACE_FREE_TOWER, game.getCurrentState().getCurrentSetupPhase());
 	}
 
 	@Test
 	public void testConstructBuilding() {
-		fail("Not yet implemented");
+		testGiveThirdHexToPlayer();
+		assertEquals(10,p1.getGold());
+		assertEquals(10,p2.getGold());
+		assertEquals(10,p3.getGold());
+		assertEquals(10,p4.getGold());
+		
+		game.constructBuilding(BuildableBuilding.Tower, p1.getID(),game.getCurrentState().getBoard().getHexByXY(4, 5).getHex());
+		
+		assertEquals(true,game.getCurrentState().getBoard().getHexByXY(4, 5).hasBuilding());
+		assertEquals(1,p1.getOwnedThingsOnBoard().size());
+		assertEquals(BuildableBuilding.Tower.name(),p1.getOwnedThingsOnBoard().iterator().next().getName());
+		assertEquals(true,p1.ownsThingOnBoard(game.getCurrentState().getBoard().getHexByXY(4, 5).getBuilding()));
+		
+		game.constructBuilding(BuildableBuilding.Tower, p2.getID(),game.getCurrentState().getBoard().getHexByXY(5, 8).getHex());
+		
+		assertEquals(true,game.getCurrentState().getBoard().getHexByXY(5, 8).hasBuilding());
+		assertEquals(1,p2.getOwnedThingsOnBoard().size());
+		assertEquals(BuildableBuilding.Tower.name(),p2.getOwnedThingsOnBoard().iterator().next().getName());
+		assertEquals(true,p2.ownsThingOnBoard(game.getCurrentState().getBoard().getHexByXY(5, 8).getBuilding()));
+		
+		game.constructBuilding(BuildableBuilding.Tower, p3.getID(),game.getCurrentState().getBoard().getHexByXY(2, 9).getHex());
+		
+		assertEquals(true,game.getCurrentState().getBoard().getHexByXY(2, 9).hasBuilding());
+		assertEquals(1,p3.getOwnedThingsOnBoard().size());
+		assertEquals(BuildableBuilding.Tower.name(),p3.getOwnedThingsOnBoard().iterator().next().getName());
+		assertEquals(true,p3.ownsThingOnBoard(game.getCurrentState().getBoard().getHexByXY(2, 9).getBuilding()));
+		
+		game.constructBuilding(BuildableBuilding.Tower, p4.getID(),game.getCurrentState().getBoard().getHexByXY(2, 3).getHex());
+		
+		assertEquals(true,game.getCurrentState().getBoard().getHexByXY(2, 3).hasBuilding());
+		assertEquals(1,p4.getOwnedThingsOnBoard().size());
+		assertEquals(BuildableBuilding.Tower.name(),p4.getOwnedThingsOnBoard().iterator().next().getName());
+		assertEquals(true,p4.ownsThingOnBoard(game.getCurrentState().getBoard().getHexByXY(2, 3).getBuilding()));
+
+		validateThirdHexGivenState();
+		
+		assertEquals(SetupPhase.PLACE_FREE_THINGS,game.getCurrentState().getCurrentSetupPhase());
 	}
 
 	@Test
 	public void testPlaceThingOnBoard() {
-		fail("Not yet implemented");
+		testConstructBuilding();
+		
+		assertEquals(10,p1.getTrayThings().size());
+		assertEquals(10,p2.getTrayThings().size());
+		assertEquals(10,p3.getTrayThings().size());
+		assertEquals(10,p4.getTrayThings().size());
+		
+		String[] stackOneNames = {"Old_Dragon","Giant_Spider","Elephant","Brown_Knight","Giant","Dwarves"};
+		for(String s : stackOneNames)
+		{
+			game.placeThingOnBoard(getPlayerTrayThingByName(s,p1), p1.getID(), game.getCurrentState().getBoard().getHexByXY(4, 5).getHex());
+		}
+
+		String[] stackTwoNames = {"Skeletons","Watusi","Goblins","Ogre"};
+		for(String s : stackTwoNames)
+		{
+			game.placeThingOnBoard(getPlayerTrayThingByName(s,p1), p1.getID(), game.getCurrentState().getBoard().getHexByXY(4, 3).getHex());
+		}
+		
+		assertEquals(0,p1.getTrayThings().size());
+		assertEquals(11,p1.getOwnedThingsOnBoard().size());
+		game.endPlayerTurn(p1.getID());
+		
+		/**********************/
+
+		String[] stackOneNames2 = {"Pterodactyl_Warriors","Sandworm","Green_Knight","Dervish","Crocodiles","Nomads","Druid","Walking_Tree","Crawling_Vines","Bandits"};
+		for(String s : stackOneNames2)
+		{
+			game.placeThingOnBoard(getPlayerTrayThingByName(s,p2), p2.getID(), game.getCurrentState().getBoard().getHexByXY(5, 8).getHex());
+		}
+
+		assertEquals(0,p2.getTrayThings().size());
+		assertEquals(11,p2.getOwnedThingsOnBoard().size());
+		game.endPlayerTurn(p2.getID());
+		
+		/*********************/
+
+		String[] stackOneNames3 = {"Centaur","Camel_Corps","Farmers"};
+		for(String s : stackOneNames3)
+		{
+			game.placeThingOnBoard(getPlayerTrayThingByName(s,p3), p3.getID(), game.getCurrentState().getBoard().getHexByXY(2, 9).getHex());
+		}
+		game.placeThingOnBoard(getPlayerTrayThingByName("Farmers",p3), p3.getID(), game.getCurrentState().getBoard().getHexByXY(2, 9).getHex());
+
+		String[] stackTwoNames3 = {"Genie","Skeletons","Pygmies"};
+		for(String s : stackTwoNames3)
+		{
+			game.placeThingOnBoard(getPlayerTrayThingByName(s,p3), p3.getID(), game.getCurrentState().getBoard().getHexByXY(THIRD_SPOT.x, THIRD_SPOT.y).getHex());
+		}
+
+		String[] stackThreeNames3 = {"Greathunter","Nomads","Witch_Doctor"};
+		for(String s : stackThreeNames3)
+		{
+			game.placeThingOnBoard(getPlayerTrayThingByName(s,p3), p3.getID(), game.getCurrentState().getBoard().getHexByXY(1, 8).getHex());
+		}
+		
+		assertEquals(0,p3.getTrayThings().size());
+		assertEquals(11,p3.getOwnedThingsOnBoard().size());
+		game.endPlayerTurn(p3.getID());
+		
+		/*********************/
+
+		String[] stackOneNames4 = {"Tribesmen","Giant_Lizard","Villains","Tigers"};
+		for(String s : stackOneNames4)
+		{
+			game.placeThingOnBoard(getPlayerTrayThingByName(s,p4), p4.getID(), game.getCurrentState().getBoard().getHexByXY(2, 3).getHex());
+		}
+
+		String[] stackTwoNames4 = {"Vampire_Bat","Tribesmen","Dark_Wizard","Black_Knight"};
+		for(String s : stackTwoNames4)
+		{
+			game.placeThingOnBoard(getPlayerTrayThingByName(s,p4), p4.getID(), game.getCurrentState().getBoard().getHexByXY(1, 4).getHex());
+		}
+
+		String[] stackThreeNames4 = {"Giant_Ape","Buffalo_Herd"};
+		for(String s : stackThreeNames4)
+		{
+			game.placeThingOnBoard(getPlayerTrayThingByName(s,p4), p4.getID(), game.getCurrentState().getBoard().getHexByXY(FIRST_SPOT.x, FIRST_SPOT.y).getHex());
+		}
+		
+		assertEquals(0,p4.getTrayThings().size());
+		assertEquals(11,p4.getOwnedThingsOnBoard().size());
+		game.endPlayerTurn(p4.getID());
 	}
 
 	@Test
@@ -224,5 +327,42 @@ public class TestGameFlowManager {
 	private Player getPlayerAtIndex(int index)
 	{
 		return game.getCurrentState().getPlayerByPlayerNumber(game.getCurrentState().getPlayerOrder().get(index));
+	}
+	
+	private void validateThirdHexGivenState()
+	{
+		assertEquals(3,p1.getOwnedHexes().size());
+		assertEquals(3,p2.getOwnedHexes().size());
+		assertEquals(3,p3.getOwnedHexes().size());
+		assertEquals(3,p4.getOwnedHexes().size());
+
+		assertEquals(true,p1.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(SECOND_SPOT.x, SECOND_SPOT.y).getHex()));
+		assertEquals(true,p2.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(FOURTH_SPOT.x, FOURTH_SPOT.y).getHex()));
+		assertEquals(true,p3.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(THIRD_SPOT.x, THIRD_SPOT.y).getHex()));
+		assertEquals(true,p4.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(FIRST_SPOT.x, FIRST_SPOT.y).getHex()));
+
+		assertEquals(true,p1.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(4, 3).getHex()));
+		assertEquals(true,p2.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(5, 8).getHex()));
+		assertEquals(true,p3.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(1, 8).getHex()));
+		assertEquals(true,p4.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(2, 3).getHex()));
+		
+		assertEquals(true,p1.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(4, 5).getHex()));
+		assertEquals(true,p2.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(6, 7).getHex()));
+		assertEquals(true,p3.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(2, 9).getHex()));
+		assertEquals(true,p4.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(1, 4).getHex()));
+		
+	}
+	
+	private TileProperties getPlayerTrayThingByName(String name, Player p)
+	{
+		for(TileProperties tp : p.getTrayThings())
+		{
+			if(tp.getName().equals(name))
+			{
+				return tp;
+			}
+		}
+		
+		return null;
 	}
 }
