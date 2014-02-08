@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import common.PlayerInfo;
+import common.game.PlayerInfo;
 
 public class TestPlayer {
 	private Player p;

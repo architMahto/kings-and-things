@@ -17,9 +17,10 @@ import common.Constants;
 import common.Constants.BuildableBuilding;
 import common.Constants.RegularPhase;
 import common.Constants.SetupPhase;
-import common.LoadResources;
-import common.PlayerInfo;
-import common.TileProperties;
+import common.game.HexState;
+import common.game.LoadResources;
+import common.game.PlayerInfo;
+import common.game.TileProperties;
 
 public class TestGameFlowManager {
 	
@@ -372,6 +373,65 @@ public class TestGameFlowManager {
 
 		game.recruitThings(0, new ArrayList<TileProperties>(), p4.getID());
 		assertEquals(2,p4.getTrayThings().size());
+		game.endPlayerTurn(p4.getID());
+	}
+	
+	@Test
+	public void testMovingThings() throws NoMoreTilesException
+	{
+		testRecruitingThings();
+
+		//skip random events phase
+		game.endPlayerTurn(p1.getID());
+		game.endPlayerTurn(p2.getID());
+		game.endPlayerTurn(p3.getID());
+		game.endPlayerTurn(p4.getID());
+		
+		for(HexState hs : game.getCurrentState().getBoard().getHexesAsList())
+		{
+			for(TileProperties tp : hs.getCreaturesInHex())
+			{
+				assertEquals(Constants.MAX_MOVE_SPEED, tp.getMoveSpeed());
+			}
+		}
+
+		assertEquals(7,game.getCurrentState().getBoard().getHexByXY(4, 3).getCreaturesInHex().size());
+		
+		ArrayList<TileProperties> hexes = new ArrayList<TileProperties>();
+		hexes.add(game.getCurrentState().getBoard().getHexByXY(4, 3).getHex());
+		hexes.add(game.getCurrentState().getBoard().getHexByXY(3, 2).getHex());
+		game.moveThings(game.getCurrentState().getBoard().getHexByXY(4, 3).getCreaturesInHex(), p1.getID(), hexes);
+
+		assertEquals(0,game.getCurrentState().getBoard().getHexByXY(4, 3).getCreaturesInHex().size());
+		assertEquals(7,game.getCurrentState().getBoard().getHexByXY(3, 2).getCreaturesInHex().size());
+		
+		for(TileProperties tp : game.getCurrentState().getBoard().getHexByXY(3, 2).getCreaturesInHex())
+		{
+			assertEquals(Constants.MAX_MOVE_SPEED - 1,tp.getMoveSpeed());
+		}
+		
+		game.endPlayerTurn(p1.getID());
+
+		assertEquals(10,game.getCurrentState().getBoard().getHexByXY(5, 8).getCreaturesInHex().size());
+		
+		hexes.clear();
+		hexes.add(game.getCurrentState().getBoard().getHexByXY(5, 8).getHex());
+		hexes.add(game.getCurrentState().getBoard().getHexByXY(4, 7).getHex());
+		
+		game.moveThings(game.getCurrentState().getBoard().getHexByXY(5, 8).getCreaturesInHex(), p2.getID(), hexes);
+
+		assertEquals(0,game.getCurrentState().getBoard().getHexByXY(5, 8).getCreaturesInHex().size());
+		assertEquals(10,game.getCurrentState().getBoard().getHexByXY(4, 7).getCreaturesInHex().size());
+
+		for(TileProperties tp : game.getCurrentState().getBoard().getHexByXY(4, 7).getCreaturesInHex())
+		{
+			assertEquals(Constants.MAX_MOVE_SPEED - 1,tp.getMoveSpeed());
+		}
+		
+		game.endPlayerTurn(p2.getID());
+
+		//skip other player movement
+		game.endPlayerTurn(p3.getID());
 		game.endPlayerTurn(p4.getID());
 	}
 
