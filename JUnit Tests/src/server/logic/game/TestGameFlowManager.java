@@ -1,6 +1,7 @@
 package server.logic.game;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import server.logic.exceptions.NoMoreTilesException;
 import common.Constants;
 import common.Constants.BuildableBuilding;
 import common.Constants.RegularPhase;
+import common.Constants.RollReason;
 import common.Constants.SetupPhase;
 import common.game.HexState;
 import common.game.LoadResources;
@@ -435,6 +437,42 @@ public class TestGameFlowManager {
 		game.endPlayerTurn(p4.getID());
 	}
 
+	@Test
+	public void testExploration()
+	{
+		try
+		{
+			testMovingThings();
+		}
+		catch (NoMoreTilesException e)
+		{
+			fail(e.getMessage());
+		}
+		
+		assertEquals(RegularPhase.COMBAT, game.getCurrentState().getCurrentRegularPhase());
+		
+		game.resolveCombat(game.getCurrentState().getBoard().getHexByXY(3, 2).getHex(), p1.getID());
+		game.rollDice(RollReason.EXPLORE_HEX, p1.getID(), game.getCurrentState().getBoard().getHexByXY(3, 2).getHex());
+		assertEquals(4, p1.getOwnedHexes().size());
+		assertEquals(true,p1.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(3, 2).getHex()));
+		assertEquals(7,game.getCurrentState().getBoard().getHexByXY(3, 2).getCreaturesInHex().size());
+		
+		game.endPlayerTurn(p1.getID());
+		
+
+		game.resolveCombat(game.getCurrentState().getBoard().getHexByXY(4, 7).getHex(), p2.getID());
+		game.rollDice(RollReason.EXPLORE_HEX, p2.getID(), game.getCurrentState().getBoard().getHexByXY(4, 7).getHex());
+		assertEquals(4, p2.getOwnedHexes().size());
+		assertEquals(true,p2.getOwnedHexes().contains(game.getCurrentState().getBoard().getHexByXY(4, 7).getHex()));
+		assertEquals(10,game.getCurrentState().getBoard().getHexByXY(4, 7).getCreaturesInHex().size());
+
+		game.endPlayerTurn(p2.getID());
+		
+		//skip other player combat
+		game.endPlayerTurn(p3.getID());
+		game.endPlayerTurn(p4.getID());
+	}
+	
 	private void assertPlayerAtIndexIsActiveForPhase(int index)
 	{
 		assertEquals(game.getCurrentState().getActivePhasePlayer().getID(),game.getCurrentState().getPlayerOrder().get(index).intValue());
