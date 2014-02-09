@@ -532,6 +532,64 @@ public class TestGameFlowManager {
 		assertEquals(2,p1.getTrayThings().size());
 		game.endPlayerTurn(p1.getID());
 	}
+
+	@Test
+	public void testTurnTwoMovement() throws NoMoreTilesException
+	{
+		testTurnTwoRecruitment();
+
+		//skip random events phase
+		game.endPlayerTurn(p2.getID());
+		game.endPlayerTurn(p3.getID());
+		game.endPlayerTurn(p4.getID());
+		game.endPlayerTurn(p1.getID());
+		
+		assertEquals(RegularPhase.MOVEMENT, game.getCurrentState().getCurrentRegularPhase());
+		assertEquals(p2.getID(), game.getCurrentState().getActivePhasePlayer().getID());
+		assertEquals(p2.getID(), game.getCurrentState().getActiveTurnPlayer().getID());
+
+		for(HexState hs : game.getCurrentState().getBoard().getHexesAsList())
+		{
+			for(TileProperties tp : hs.getCreaturesInHex())
+			{
+				assertEquals(Constants.MAX_MOVE_SPEED, tp.getMoveSpeed());
+			}
+		}
+
+		ArrayList<TileProperties> hexes = new ArrayList<TileProperties>();
+		hexes.add(game.getCurrentState().getBoard().getHexByXY(4, 7).getHex());
+		hexes.add(game.getCurrentState().getBoard().getHexByXY(4, 5).getHex());
+		game.moveThings(game.getCurrentState().getBoard().getHexByXY(4, 7).getCreaturesInHex(), p2.getID(), hexes);
+
+		assertEquals(0,game.getCurrentState().getBoard().getHexByXY(4, 7).getCreaturesInHex().size());
+		assertEquals(10,game.getCurrentState().getBoard().getHexByXY(4, 5).getThingsInHexOwnedByPlayer(p2).size());
+
+		for(TileProperties tp : game.getCurrentState().getBoard().getHexByXY(4, 5).getThingsInHexOwnedByPlayer(p2))
+		{
+			assertEquals(Constants.MAX_MOVE_SPEED - 2,tp.getMoveSpeed());
+		}
+		
+		game.endPlayerTurn(p2.getID());
+
+		//skip player 3 and 4 movement
+		game.endPlayerTurn(p3.getID());
+		game.endPlayerTurn(p4.getID());
+
+		hexes = new ArrayList<TileProperties>();
+		hexes.add(game.getCurrentState().getBoard().getHexByXY(3, 2).getHex());
+		hexes.add(game.getCurrentState().getBoard().getHexByXY(2, 3).getHex());
+		game.moveThings(game.getCurrentState().getBoard().getHexByXY(3, 2).getCreaturesInHex(), p1.getID(), hexes);
+
+		assertEquals(0,game.getCurrentState().getBoard().getHexByXY(3, 2).getCreaturesInHex().size());
+		assertEquals(7,game.getCurrentState().getBoard().getHexByXY(2, 3).getThingsInHexOwnedByPlayer(p1).size());
+
+		for(TileProperties tp : game.getCurrentState().getBoard().getHexByXY(2, 3).getThingsInHexOwnedByPlayer(p1))
+		{
+			assertEquals(Constants.MAX_MOVE_SPEED - 1,tp.getMoveSpeed());
+		}
+		
+		game.endPlayerTurn(p1.getID());
+	}
 	
 	private void assertPlayerAtIndexIsActiveForPhase(int index)
 	{
