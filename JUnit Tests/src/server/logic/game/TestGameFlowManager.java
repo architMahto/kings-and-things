@@ -7,11 +7,16 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import client.gui.CombatPanel;
 
 import com.google.common.eventbus.Subscribe;
 
@@ -53,7 +58,7 @@ public class TestGameFlowManager {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		LoadResources lr = new LoadResources("..\\kings-and-things\\Kings And Things\\" + Constants.RESOURCE_PATH,false);
+		LoadResources lr = new LoadResources("..\\Kings And Things\\" + Constants.RESOURCE_PATH,true);
 		lr.run();
 	}
 
@@ -623,12 +628,57 @@ public class TestGameFlowManager {
 		}
 			
 		assertEquals(RegularPhase.COMBAT, currentState.getCurrentRegularPhase());
-			
+		
 		getCombatCommandHandler().resolveCombat(currentState.getBoard().getHexByXY(4, 5).getHex(), p2.getID());
 		
+		SwingUtilities.invokeLater(new Runnable(){
+			@Override
+			public void run()
+			{
+				JFrame p2Frame = new JFrame("Player 2");
+				CombatPanel cp2 = new CombatPanel(currentState.getBoard().getHexByXY(4, 5),p2);
+				p2Frame.getContentPane().add(cp2);
+				EventDispatch.registerForNotificationEvents(cp2);
+				p2Frame.setVisible(true);
+
+				JFrame p1Frame = new JFrame("Player 1");
+				CombatPanel cp1 = new CombatPanel(currentState.getBoard().getHexByXY(4, 5),p1);
+				EventDispatch.registerForNotificationEvents(cp1);
+				p1Frame.getContentPane().add(cp1);
+				p1Frame.setVisible(true);
+			}});
+		
+		while(true)
+		{
+			try
+			{
+				Thread.sleep(5000);
+			}
+			catch (InterruptedException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		/*
 		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p2.getID(), getPlayerBoardThingByName("Dervish",p2,new Point(4,5)));
 		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Old_Dragon",p1,new Point(4,5)));
 		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p2.getID(), getPlayerBoardThingByName("Druid",p2,new Point(4,5)));
+		
+		while(currentState.getHitsOnPlayer(p1.getID()) > 0)
+		{
+			getCombatCommandHandler().applyHits(currentState.getCombatHex().getThingsInHexOwnedByPlayer(p1).iterator().next(), p1.getID(), 1);
+		}
+
+		while(currentState.getHitsOnPlayer(p2.getID()) > 0)
+		{
+			getCombatCommandHandler().applyHits(currentState.getCombatHex().getThingsInHexOwnedByPlayer(p2).iterator().next(), p2.getID(), 1);
+		}
+
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p2.getID(), getPlayerBoardThingByName("Dervish",p2,new Point(4,5)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Old_Dragon",p1,new Point(4,5)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p2.getID(), getPlayerBoardThingByName("Druid",p2,new Point(4,5)));
+		*/
 		/*
 		assertEquals(4, p1.getOwnedHexes().size());
 		assertEquals(true,p1.getOwnedHexes().contains(currentState.getBoard().getHexByXY(3, 2).getHex()));
