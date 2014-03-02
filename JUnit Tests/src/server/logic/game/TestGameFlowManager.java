@@ -10,15 +10,12 @@ import java.util.HashSet;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import client.gui.CombatPanel;
-
-import com.google.common.eventbus.Subscribe;
 
 import server.event.GameStarted;
 import server.event.commands.StartGameCommand;
@@ -29,6 +26,10 @@ import server.logic.game.handlers.ConstructBuildingCommandHandler;
 import server.logic.game.handlers.MovementCommandHandler;
 import server.logic.game.handlers.RecruitingThingsCommandHandler;
 import server.logic.game.handlers.SetupPhaseCommandHandler;
+import client.gui.CombatPanel;
+
+import com.google.common.eventbus.Subscribe;
+
 import common.Constants;
 import common.Constants.BuildableBuilding;
 import common.Constants.RegularPhase;
@@ -36,9 +37,9 @@ import common.Constants.RollReason;
 import common.Constants.SetupPhase;
 import common.event.EventDispatch;
 import common.game.HexState;
+import common.game.ITileProperties;
 import common.game.LoadResources;
 import common.game.PlayerInfo;
-import common.game.TileProperties;
 
 public class TestGameFlowManager {
 	
@@ -58,8 +59,9 @@ public class TestGameFlowManager {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		LoadResources lr = new LoadResources("..\\Kings And Things\\" + Constants.RESOURCE_PATH,true);
+		LoadResources lr = new LoadResources("..\\Kings And Things\\" + Constants.RESOURCE_PATH,false);
 		lr.run();
+		PropertyConfigurator.configure("Log Settings\\serverLog4j.properties");
 	}
 
 	@AfterClass
@@ -376,7 +378,7 @@ public class TestGameFlowManager {
 		assertEquals(p1.getID(),currentState.getActivePhasePlayer().getID());
 		assertEquals(p1.getID(),currentState.getActiveTurnPlayer().getID());
 		
-		getRecruitingThingsCommandHandler().recruitThings(5, new ArrayList<TileProperties>(), p1.getID());
+		getRecruitingThingsCommandHandler().recruitThings(5, new ArrayList<ITileProperties>(), p1.getID());
 		assertEquals(3,p1.getTrayThings().size());
 		assertEquals(9,p1.getGold());
 
@@ -390,15 +392,15 @@ public class TestGameFlowManager {
 		
 		getRecruitingThingsCommandHandler().endPlayerTurn(p1.getID());
 		
-		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<TileProperties>(), p2.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p2.getID());
 		assertEquals(2,p2.getTrayThings().size());
 		getRecruitingThingsCommandHandler().endPlayerTurn(p2.getID());
 
-		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<TileProperties>(), p3.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p3.getID());
 		assertEquals(2,p3.getTrayThings().size());
 		getRecruitingThingsCommandHandler().endPlayerTurn(p3.getID());
 
-		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<TileProperties>(), p4.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p4.getID());
 		assertEquals(2,p4.getTrayThings().size());
 		getRecruitingThingsCommandHandler().endPlayerTurn(p4.getID());
 	}
@@ -416,7 +418,7 @@ public class TestGameFlowManager {
 		
 		for(HexState hs : currentState.getBoard().getHexesAsList())
 		{
-			for(TileProperties tp : hs.getCreaturesInHex())
+			for(ITileProperties tp : hs.getCreaturesInHex())
 			{
 				assertEquals(Constants.MAX_MOVE_SPEED, tp.getMoveSpeed());
 			}
@@ -424,7 +426,7 @@ public class TestGameFlowManager {
 
 		assertEquals(7,currentState.getBoard().getHexByXY(4, 3).getCreaturesInHex().size());
 		
-		ArrayList<TileProperties> hexes = new ArrayList<TileProperties>();
+		ArrayList<ITileProperties> hexes = new ArrayList<ITileProperties>();
 		hexes.add(currentState.getBoard().getHexByXY(4, 3).getHex());
 		hexes.add(currentState.getBoard().getHexByXY(3, 2).getHex());
 		getMovementCommandHandler().moveThings(currentState.getBoard().getHexByXY(4, 3).getCreaturesInHex(), p1.getID(), hexes);
@@ -432,7 +434,7 @@ public class TestGameFlowManager {
 		assertEquals(0,currentState.getBoard().getHexByXY(4, 3).getCreaturesInHex().size());
 		assertEquals(7,currentState.getBoard().getHexByXY(3, 2).getCreaturesInHex().size());
 		
-		for(TileProperties tp : currentState.getBoard().getHexByXY(3, 2).getCreaturesInHex())
+		for(ITileProperties tp : currentState.getBoard().getHexByXY(3, 2).getCreaturesInHex())
 		{
 			assertEquals(Constants.MAX_MOVE_SPEED - 1,tp.getMoveSpeed());
 		}
@@ -450,7 +452,7 @@ public class TestGameFlowManager {
 		assertEquals(0,currentState.getBoard().getHexByXY(5, 8).getCreaturesInHex().size());
 		assertEquals(10,currentState.getBoard().getHexByXY(4, 7).getCreaturesInHex().size());
 
-		for(TileProperties tp : currentState.getBoard().getHexByXY(4, 7).getCreaturesInHex())
+		for(ITileProperties tp : currentState.getBoard().getHexByXY(4, 7).getCreaturesInHex())
 		{
 			assertEquals(Constants.MAX_MOVE_SPEED - 1,tp.getMoveSpeed());
 		}
@@ -540,19 +542,19 @@ public class TestGameFlowManager {
 		assertEquals(p2.getID(), currentState.getActivePhasePlayer().getID());
 		assertEquals(p2.getID(), currentState.getActiveTurnPlayer().getID());
 		
-		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<TileProperties>(), p2.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p2.getID());
 		assertEquals(4,p2.getTrayThings().size());
 		getRecruitingThingsCommandHandler().endPlayerTurn(p2.getID());
 
-		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<TileProperties>(), p3.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p3.getID());
 		assertEquals(4,p3.getTrayThings().size());
 		getRecruitingThingsCommandHandler().endPlayerTurn(p3.getID());
 
-		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<TileProperties>(), p4.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p4.getID());
 		assertEquals(4,p4.getTrayThings().size());
 		getRecruitingThingsCommandHandler().endPlayerTurn(p4.getID());
 
-		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<TileProperties>(), p1.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p1.getID());
 		assertEquals(2,p1.getTrayThings().size());
 		getRecruitingThingsCommandHandler().endPlayerTurn(p1.getID());
 	}
@@ -574,13 +576,13 @@ public class TestGameFlowManager {
 
 		for(HexState hs : currentState.getBoard().getHexesAsList())
 		{
-			for(TileProperties tp : hs.getCreaturesInHex())
+			for(ITileProperties tp : hs.getCreaturesInHex())
 			{
 				assertEquals(Constants.MAX_MOVE_SPEED, tp.getMoveSpeed());
 			}
 		}
 
-		ArrayList<TileProperties> hexes = new ArrayList<TileProperties>();
+		ArrayList<ITileProperties> hexes = new ArrayList<ITileProperties>();
 		hexes.add(currentState.getBoard().getHexByXY(4, 7).getHex());
 		hexes.add(currentState.getBoard().getHexByXY(4, 5).getHex());
 		getMovementCommandHandler().moveThings(currentState.getBoard().getHexByXY(4, 7).getCreaturesInHex(), p2.getID(), hexes);
@@ -588,7 +590,7 @@ public class TestGameFlowManager {
 		assertEquals(0,currentState.getBoard().getHexByXY(4, 7).getCreaturesInHex().size());
 		assertEquals(10,currentState.getBoard().getHexByXY(4, 5).getThingsInHexOwnedByPlayer(p2).size());
 
-		for(TileProperties tp : currentState.getBoard().getHexByXY(4, 5).getThingsInHexOwnedByPlayer(p2))
+		for(ITileProperties tp : currentState.getBoard().getHexByXY(4, 5).getThingsInHexOwnedByPlayer(p2))
 		{
 			assertEquals(Constants.MAX_MOVE_SPEED - 2,tp.getMoveSpeed());
 		}
@@ -599,7 +601,7 @@ public class TestGameFlowManager {
 		getMovementCommandHandler().endPlayerTurn(p3.getID());
 		getMovementCommandHandler().endPlayerTurn(p4.getID());
 
-		hexes = new ArrayList<TileProperties>();
+		hexes = new ArrayList<ITileProperties>();
 		hexes.add(currentState.getBoard().getHexByXY(3, 2).getHex());
 		hexes.add(currentState.getBoard().getHexByXY(2, 3).getHex());
 		getMovementCommandHandler().moveThings(currentState.getBoard().getHexByXY(3, 2).getCreaturesInHex(), p1.getID(), hexes);
@@ -607,7 +609,7 @@ public class TestGameFlowManager {
 		assertEquals(0,currentState.getBoard().getHexByXY(3, 2).getCreaturesInHex().size());
 		assertEquals(7,currentState.getBoard().getHexByXY(2, 3).getThingsInHexOwnedByPlayer(p1).size());
 
-		for(TileProperties tp : currentState.getBoard().getHexByXY(2, 3).getThingsInHexOwnedByPlayer(p1))
+		for(ITileProperties tp : currentState.getBoard().getHexByXY(2, 3).getThingsInHexOwnedByPlayer(p1))
 		{
 			assertEquals(Constants.MAX_MOVE_SPEED - 1,tp.getMoveSpeed());
 		}
@@ -618,6 +620,7 @@ public class TestGameFlowManager {
 	@Test
 	public void testTurnTwoCombat()
 	{
+		fail("not yet implemented");
 		try
 		{
 			testTurnTwoMovement();
@@ -739,9 +742,9 @@ public class TestGameFlowManager {
 		
 	}
 	
-	private TileProperties getPlayerTrayThingByName(String name, Player p)
+	private ITileProperties getPlayerTrayThingByName(String name, Player p)
 	{
-		for(TileProperties tp : p.getTrayThings())
+		for(ITileProperties tp : p.getTrayThings())
 		{
 			if(tp.getName().equals(name))
 			{
@@ -752,9 +755,9 @@ public class TestGameFlowManager {
 		return null;
 	}
 	
-	private TileProperties getPlayerBoardThingByName(String name, Player p, Point location)
+	private ITileProperties getPlayerBoardThingByName(String name, Player p, Point location)
 	{
-		for(TileProperties tp : currentState.getBoard().getHexByXY(location.x, location.y).getThingsInHexOwnedByPlayer(p))
+		for(ITileProperties tp : currentState.getBoard().getHexByXY(location.x, location.y).getThingsInHexOwnedByPlayer(p))
 		{
 			if(tp.getName().equals(name))
 			{
