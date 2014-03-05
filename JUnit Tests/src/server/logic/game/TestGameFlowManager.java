@@ -18,8 +18,8 @@ import org.junit.BeforeClass;
 import org.apache.log4j.PropertyConfigurator;
 
 import client.gui.CombatPanel;
-import server.event.GameStarted;
-import server.event.commands.StartGameCommand;
+import server.event.commands.SetupPhaseComplete;
+import server.event.commands.StartSetupPhase;
 import server.logic.exceptions.NoMoreTilesException;
 import server.logic.game.handlers.CommandHandler;
 import server.logic.game.handlers.CombatCommandHandler;
@@ -27,7 +27,6 @@ import server.logic.game.handlers.MovementCommandHandler;
 import server.logic.game.handlers.SetupPhaseCommandHandler;
 import server.logic.game.handlers.RecruitingThingsCommandHandler;
 import server.logic.game.handlers.ConstructBuildingCommandHandler;
-
 import common.Constants;
 import common.event.AbstractUpdateReceiver;
 import common.game.HexState;
@@ -83,7 +82,7 @@ public class TestGameFlowManager {
 		players.add(p2);
 		players.add(p3);
 		players.add(p4);
-		new StartGameCommand(true, players).postCommand();
+		new StartSetupPhase(true, players, this).postCommand();
 		Thread.sleep(EVENT_DISPATCH_WAITING_TIME);
 		
 		p1 = getPlayerAtIndex(0);
@@ -805,14 +804,14 @@ public class TestGameFlowManager {
 		return (SetupPhaseCommandHandler) getHandlerByClass(SetupPhaseCommandHandler.class);
 	}
 	
-	private class StartGameReceiver extends AbstractUpdateReceiver<GameStarted>{
+	private class StartGameReceiver extends AbstractUpdateReceiver<SetupPhaseComplete>{
 
 		protected StartGameReceiver() {
-			super( INTERNAL, -1);
+			super( INTERNAL, -1, TestGameFlowManager.this);
 		}
 
 		@Override
-		public void handle( GameStarted update) {
+		public void handle( SetupPhaseComplete update) {
 			currentState = update.getCurrentState();
 		}
 	}
