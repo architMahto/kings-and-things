@@ -815,10 +815,5 @@ public class TestGameFlowManager {
 		public void handle( GameStarted update) {
 			currentState = update.getCurrentState();
 		}
-
-		@Override
-		public boolean verify( GameStarted update) {
-			return true;
-		}
 	}
 }
