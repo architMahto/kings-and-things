@@ -1,45 +1,43 @@
 package server.logic.game;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
 
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.PropertyConfigurator;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.apache.log4j.PropertyConfigurator;
 
+import client.gui.CombatPanel;
 import server.event.GameStarted;
 import server.event.commands.StartGameCommand;
 import server.logic.exceptions.NoMoreTilesException;
-import server.logic.game.handlers.CombatCommandHandler;
 import server.logic.game.handlers.CommandHandler;
-import server.logic.game.handlers.ConstructBuildingCommandHandler;
+import server.logic.game.handlers.CombatCommandHandler;
 import server.logic.game.handlers.MovementCommandHandler;
-import server.logic.game.handlers.RecruitingThingsCommandHandler;
 import server.logic.game.handlers.SetupPhaseCommandHandler;
-import client.gui.CombatPanel;
-
-import com.google.common.eventbus.Subscribe;
+import server.logic.game.handlers.RecruitingThingsCommandHandler;
+import server.logic.game.handlers.ConstructBuildingCommandHandler;
 
 import common.Constants;
-import common.Constants.BuildableBuilding;
-import common.Constants.RegularPhase;
+import common.event.AbstractUpdateReceiver;
+import common.game.HexState;
+import common.game.PlayerInfo;
+import common.game.LoadResources;
+import common.game.ITileProperties;
 import common.Constants.RollReason;
 import common.Constants.SetupPhase;
-import common.event.EventDispatch;
-import common.game.HexState;
-import common.game.ITileProperties;
-import common.game.LoadResources;
-import common.game.PlayerInfo;
+import common.Constants.RegularPhase;
+import common.Constants.BuildableBuilding;
 
 public class TestGameFlowManager {
 	
@@ -47,6 +45,7 @@ public class TestGameFlowManager {
 	
 	private CommandHandlerManager game;
 	private GameState currentState;
+	private StartGameReceiver receiver;
 	private Player p1;
 	private Player p2;
 	private Player p3;
@@ -72,7 +71,7 @@ public class TestGameFlowManager {
 	public void setUp() throws Exception {
 		game = new CommandHandlerManager();
 		game.initialize();
-		EventDispatch.registerForCommandEvents(this);
+		receiver = new StartGameReceiver();
 		
 		p1 = new Player(new PlayerInfo("Erik",0,true));
 		p2 = new Player(new PlayerInfo("Archit",1,true));
@@ -96,7 +95,7 @@ public class TestGameFlowManager {
 	@After
 	public void tearDown() throws Exception {
 		game.dispose();
-		EventDispatch.unregisterForCommandEvents(this);
+		receiver.unregisterFromEventBus();
 	}
 
 	@Test
@@ -641,12 +640,10 @@ public class TestGameFlowManager {
 				JFrame p2Frame = new JFrame("Player 2");
 				CombatPanel cp2 = new CombatPanel(currentState.getBoard().getHexByXY(4, 5),p2);
 				p2Frame.getContentPane().add(cp2);
-				EventDispatch.registerForNotificationEvents(cp2);
 				p2Frame.setVisible(true);
 
 				JFrame p1Frame = new JFrame("Player 1");
 				CombatPanel cp1 = new CombatPanel(currentState.getBoard().getHexByXY(4, 5),p1);
-				EventDispatch.registerForNotificationEvents(cp1);
 				p1Frame.getContentPane().add(cp1);
 				p1Frame.setVisible(true);
 			}});
@@ -808,10 +805,20 @@ public class TestGameFlowManager {
 		return (SetupPhaseCommandHandler) getHandlerByClass(SetupPhaseCommandHandler.class);
 	}
 	
-	
-	@Subscribe
-	public void receivedStartGameCommand(GameStarted event)
-	{
-		currentState = event.getCurrentState();
+	private class StartGameReceiver extends AbstractUpdateReceiver<GameStarted>{
+
+		protected StartGameReceiver() {
+			super( INTERNAL, -1);
+		}
+
+		@Override
+		public void handle( GameStarted update) {
+			currentState = update.getCurrentState();
+		}
+
+		@Override
+		public boolean verify( GameStarted update) {
+			return true;
+		}
 	}
 }
