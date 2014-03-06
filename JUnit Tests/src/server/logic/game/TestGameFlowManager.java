@@ -811,7 +811,7 @@ public class TestGameFlowManager {
 		}
 
 		@Override
-		public void handle( SetupPhaseComplete update) {
+		public void handlePublic( SetupPhaseComplete update) {
 			currentState = update.getCurrentState();
 		}
 	}
