@@ -82,7 +82,7 @@ public class TestGameFlowManager {
 		players.add(p2);
 		players.add(p3);
 		players.add(p4);
-		new StartSetupPhase(true, players, this).postCommand();
+		new StartSetupPhase(true, players, this).postInternalEvent();
 		Thread.sleep(EVENT_DISPATCH_WAITING_TIME);
 		
 		p1 = getPlayerAtIndex(0);
