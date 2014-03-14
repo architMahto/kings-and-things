@@ -795,6 +795,193 @@ public class TestGameFlowManager {
 		assertEquals(RegularPhase.COMBAT, currentState.getCurrentRegularPhase());
 		assertEquals(p3,currentState.getActivePhasePlayer());
 	}
+
+	@Test
+	public void testTurnTwoSecondCombat()
+	{
+		testTurnTwoFirstCombat();
+		//no combat for p3
+		getCombatCommandHandler().endPlayerTurn(p3.getID());
+		assertEquals(CombatPhase.NO_COMBAT, currentState.getCurrentCombatPhase());
+		assertEquals(RegularPhase.COMBAT, currentState.getCurrentRegularPhase());
+		assertEquals(p4,currentState.getActivePhasePlayer());
+
+		getCombatCommandHandler().resolveCombat(currentState.getBoard().getHexByXY(2, 3).getHex(), p4.getID());
+		for(ITileProperties tp : currentState.getCombatHex().getThingsInHex())
+		{
+			assertEquals(true,tp.isFaceUp());
+		}
+		
+		assertEquals(CombatPhase.MELEE_ATTACK, currentState.getCurrentCombatPhase());
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Tribesmen",p4,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Giant_Lizard",p4,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Villains",p4,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Tigers",p4,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Tower",p4,new Point(2,3)));
+
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Skeletons",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Watusi",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Goblins",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Ogre",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Cyclops",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Mountain_Men",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Goblins",p1,new Point(2,3),1));
+
+		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
+		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
+		assertEquals(1,currentState.getHitsOnPlayer(p4.getID()));
+
+		getCombatCommandHandler().applyHits(getPlayerBoardThingByName("Skeletons",p1,new Point(2,3)), p1.getID(), 1);
+		getCombatCommandHandler().applyHits(getPlayerBoardThingByName("Tribesmen",p4,new Point(2,3)), p4.getID(), 1);
+
+		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p4.getID()));
+		assertEquals(CombatPhase.ATTACKER_RETREAT, currentState.getCurrentCombatPhase());
+
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+		assertEquals(CombatPhase.DEFENDER_RETREAT, currentState.getCurrentCombatPhase());
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		assertEquals(CombatPhase.MELEE_ATTACK, currentState.getCurrentCombatPhase());
+
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Giant_Lizard",p4,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Villains",p4,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Tigers",p4,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Tower",p4,new Point(2,3)));
+
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Watusi",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Goblins",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Ogre",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Cyclops",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Mountain_Men",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Goblins",p1,new Point(2,3),1));
+
+		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
+		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
+		assertEquals(1,currentState.getHitsOnPlayer(p4.getID()));
+
+		getCombatCommandHandler().applyHits(getPlayerBoardThingByName("Goblins",p1,new Point(2,3),1), p1.getID(), 1);
+		getCombatCommandHandler().applyHits(getPlayerBoardThingByName("Giant_Lizard",p4,new Point(2,3)), p4.getID(), 1);
+
+		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p4.getID()));
+		assertEquals(CombatPhase.ATTACKER_RETREAT, currentState.getCurrentCombatPhase());
+
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+		assertEquals(CombatPhase.DEFENDER_RETREAT, currentState.getCurrentCombatPhase());
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		assertEquals(CombatPhase.MELEE_ATTACK, currentState.getCurrentCombatPhase());
+
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Villains",p4,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Tigers",p4,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Tower",p4,new Point(2,3)));
+
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Watusi",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Ogre",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Cyclops",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Mountain_Men",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Goblins",p1,new Point(2,3)));
+
+		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
+		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
+		assertEquals(1,currentState.getHitsOnPlayer(p4.getID()));
+
+		getCombatCommandHandler().applyHits(getPlayerBoardThingByName("Goblins",p1,new Point(2,3)), p1.getID(), 1);
+		getCombatCommandHandler().applyHits(getPlayerBoardThingByName("Tower",p4,new Point(2,3)), p4.getID(), 1);
+
+		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p4.getID()));
+		assertEquals(CombatPhase.ATTACKER_RETREAT, currentState.getCurrentCombatPhase());
+
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+		assertEquals(CombatPhase.DEFENDER_RETREAT, currentState.getCurrentCombatPhase());
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		assertEquals(CombatPhase.MELEE_ATTACK, currentState.getCurrentCombatPhase());
+
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Villains",p4,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Tigers",p4,new Point(2,3)));
+
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Watusi",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Ogre",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Cyclops",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Mountain_Men",p1,new Point(2,3)));
+
+		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
+		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
+		assertEquals(1,currentState.getHitsOnPlayer(p4.getID()));
+
+		getCombatCommandHandler().applyHits(getPlayerBoardThingByName("Mountain_Men",p1,new Point(2,3)), p1.getID(), 1);
+		getCombatCommandHandler().applyHits(getPlayerBoardThingByName("Villains",p4,new Point(2,3)), p4.getID(), 1);
+
+		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p4.getID()));
+		assertEquals(CombatPhase.ATTACKER_RETREAT, currentState.getCurrentCombatPhase());
+
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+		assertEquals(CombatPhase.DEFENDER_RETREAT, currentState.getCurrentCombatPhase());
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		assertEquals(CombatPhase.MELEE_ATTACK, currentState.getCurrentCombatPhase());
+
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Tigers",p4,new Point(2,3)));
+
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Watusi",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Ogre",p1,new Point(2,3)));
+		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Cyclops",p1,new Point(2,3)));
+
+		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
+		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
+		assertEquals(1,currentState.getHitsOnPlayer(p4.getID()));
+
+		getCombatCommandHandler().applyHits(getPlayerBoardThingByName("Ogre",p1,new Point(2,3)), p1.getID(), 1);
+		getCombatCommandHandler().applyHits(getPlayerBoardThingByName("Tigers",p4,new Point(2,3)), p4.getID(), 1);
+
+		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p4.getID()));
+
+		assertEquals(CombatPhase.DETERMINE_DAMAGE, currentState.getCurrentCombatPhase());
+		
+		assertEquals(2, p4.getOwnedHexes().size());
+		assertEquals(4, p1.getOwnedHexes().size());
+		assertEquals(true,p1.getOwnedHexes().contains(currentState.getBoard().getHexByXY(2, 3).getHex()));
+		assertEquals(2,currentState.getBoard().getHexByXY(2, 3).getCreaturesInHex().size());
+		assertEquals(0,currentState.getBoard().getHexByXY(2, 3).getBuilding().getValue());
+		for(ITileProperties thing : currentState.getBoard().getHexByXY(2, 3).getThingsInHex())
+		{
+			assertEquals(true,p1.ownsThingOnBoard((thing)));
+			if(thing.isCreature())
+			{
+				assertEquals(false,thing.isFaceUp());
+			}
+		}
+		
+		getCombatCommandHandler().rollDice(RollReason.CALCULATE_DAMAGE_TO_TILE, p1.getID(), currentState.getCombatHex().getBuilding());
+
+		assertEquals(CombatPhase.PLACE_THINGS, currentState.getCurrentCombatPhase());
+
+		assertEquals(2, p4.getOwnedHexes().size());
+		assertEquals(4, p1.getOwnedHexes().size());
+		assertEquals(true,p1.getOwnedHexes().contains(currentState.getBoard().getHexByXY(2, 3).getHex()));
+		assertEquals(2,currentState.getBoard().getHexByXY(2, 3).getCreaturesInHex().size());
+		assertEquals(1,currentState.getBoard().getHexByXY(2, 3).getBuilding().getValue());
+		for(ITileProperties thing : currentState.getBoard().getHexByXY(2, 3).getThingsInHex())
+		{
+			assertEquals(true,p1.ownsThingOnBoard((thing)));
+			if(thing.isCreature())
+			{
+				assertEquals(false,thing.isFaceUp());
+			}
+		}
+		assertEquals(Building.Tower.name(),currentState.getCombatHex().getBuilding().getName());
+		
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+		assertEquals(CombatPhase.NO_COMBAT, currentState.getCurrentCombatPhase());
+		assertEquals(RegularPhase.COMBAT, currentState.getCurrentRegularPhase());
+		assertEquals(p1,currentState.getActivePhasePlayer());
+
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+		assertEquals(CombatPhase.NO_COMBAT, currentState.getCurrentCombatPhase());
+		assertEquals(RegularPhase.CONSTRUCTION, currentState.getCurrentRegularPhase());
+		assertEquals(p2,currentState.getActivePhasePlayer());
+	}
 	
 	@Test
 	public void testRecruitSpecialCharacters() throws NoMoreTilesException
@@ -873,11 +1060,21 @@ public class TestGameFlowManager {
 	
 	private ITileProperties getPlayerBoardThingByName(String name, Player p, Point location)
 	{
+		return getPlayerBoardThingByName(name, p, location,0);
+	}
+	
+	private ITileProperties getPlayerBoardThingByName(String name, Player p, Point location,int skipCount)
+	{
+		int matches = 0;
 		for(ITileProperties tp : currentState.getBoard().getHexByXY(location.x, location.y).getThingsInHexOwnedByPlayer(p))
 		{
 			if(tp.getName().equals(name))
 			{
-				return tp;
+				if(matches >= skipCount)
+				{
+					return tp;
+				}
+				matches++;
 			}
 		}
 		
