@@ -982,6 +982,51 @@ public class TestGameFlowManager {
 		assertEquals(RegularPhase.CONSTRUCTION, currentState.getCurrentRegularPhase());
 		assertEquals(p2,currentState.getActivePhasePlayer());
 	}
+
+	@Test
+	public void testTurnTwoRegularConstruction()
+	{
+		testTurnTwoSecondCombat();
+		
+		assertEquals(19,p2.getGold());
+		getConstructBuildingCommandHandler().constructBuilding(BuildableBuilding.Keep, p2.getID(), currentState.getBoard().getHexByXY(4, 5).getHex());
+		assertEquals(Building.Keep.name(),currentState.getBoard().getHexByXY(4, 5).getBuilding().getName());
+		assertEquals(true,p2.getOwnedThingsOnBoard().contains(currentState.getBoard().getHexByXY(4, 5).getBuilding()));
+		assertEquals(true,currentState.getBoard().getHexByXY(4, 5).getBuilding().isFaceUp());
+		assertEquals(2,currentState.getBoard().getHexByXY(4, 5).getBuilding().getValue());
+		assertEquals(14,p2.getGold());
+
+		getConstructBuildingCommandHandler().constructBuilding(BuildableBuilding.Keep, p2.getID(), currentState.getBoard().getHexByXY(5, 8).getHex());
+		assertEquals(Building.Keep.name(),currentState.getBoard().getHexByXY(5, 8).getBuilding().getName());
+		assertEquals(true,p2.getOwnedThingsOnBoard().contains(currentState.getBoard().getHexByXY(5, 8).getBuilding()));
+		assertEquals(true,currentState.getBoard().getHexByXY(5, 8).getBuilding().isFaceUp());
+		assertEquals(2,currentState.getBoard().getHexByXY(5, 8).getBuilding().getValue());
+		assertEquals(9,p2.getGold());
+
+		getConstructBuildingCommandHandler().constructBuilding(BuildableBuilding.Tower, p2.getID(), currentState.getBoard().getHexByXY(6, 7).getHex());
+		assertEquals(Building.Tower.name(),currentState.getBoard().getHexByXY(6, 7).getBuilding().getName());
+		assertEquals(true,p2.getOwnedThingsOnBoard().contains(currentState.getBoard().getHexByXY(6, 7).getBuilding()));
+		assertEquals(true,currentState.getBoard().getHexByXY(6, 7).getBuilding().isFaceUp());
+		assertEquals(1,currentState.getBoard().getHexByXY(6, 7).getBuilding().getValue());
+		assertEquals(4,p2.getGold());
+
+		getCombatCommandHandler().endPlayerTurn(p2.getID());
+		getCombatCommandHandler().endPlayerTurn(p3.getID());
+
+		assertEquals(18,p4.getGold());
+		getConstructBuildingCommandHandler().constructBuilding(BuildableBuilding.Tower, p4.getID(), currentState.getBoard().getHexByXY(1, 2).getHex());
+		assertEquals(Building.Tower.name(),currentState.getBoard().getHexByXY(1, 2).getBuilding().getName());
+		assertEquals(true,p4.getOwnedThingsOnBoard().contains(currentState.getBoard().getHexByXY(1, 2).getBuilding()));
+		assertEquals(true,currentState.getBoard().getHexByXY(1, 2).getBuilding().isFaceUp());
+		assertEquals(1,currentState.getBoard().getHexByXY(1, 2).getBuilding().getValue());
+		assertEquals(13,p4.getGold());
+
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+
+		assertEquals(RegularPhase.SPECIAL_POWERS, currentState.getCurrentRegularPhase());
+		assertEquals(p2,currentState.getActivePhasePlayer());
+	}
 	
 	@Test
 	public void testRecruitSpecialCharacters() throws NoMoreTilesException
