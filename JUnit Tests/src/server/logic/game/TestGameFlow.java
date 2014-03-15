@@ -5,25 +5,12 @@ import static org.junit.Assert.fail;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.HashSet;
 
-import org.apache.log4j.PropertyConfigurator;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import server.event.commands.SetupPhaseComplete;
-import server.event.commands.StartSetupPhase;
 import server.logic.exceptions.NoMoreTilesException;
-import server.logic.game.handlers.CombatCommandHandler;
-import server.logic.game.handlers.CommandHandler;
-import server.logic.game.handlers.ConstructBuildingCommandHandler;
-import server.logic.game.handlers.MovementCommandHandler;
 import server.logic.game.handlers.RecruitSpecialCharacterCommandHandler;
-import server.logic.game.handlers.RecruitingThingsCommandHandler;
-import server.logic.game.handlers.SetupPhaseCommandHandler;
+
 import common.Constants;
 import common.Constants.BuildableBuilding;
 import common.Constants.Building;
@@ -31,71 +18,16 @@ import common.Constants.CombatPhase;
 import common.Constants.RegularPhase;
 import common.Constants.RollReason;
 import common.Constants.SetupPhase;
-import common.event.AbstractUpdateReceiver;
 import common.game.HexState;
 import common.game.ITileProperties;
-import common.game.LoadResources;
-import common.game.PlayerInfo;
 
-public class TestGameFlowManager {
-	
-	private static final int EVENT_DISPATCH_WAITING_TIME = 500;
-	
-	private CommandHandlerManager game;
-	private GameState currentState;
-	private StartGameReceiver receiver;
-	private Player p1;
-	private Player p2;
-	private Player p3;
-	private Player p4;
+public class TestGameFlow extends TestingUtils{
 
 	private static final Point FIRST_SPOT = new Point(1,2);
 	private static final Point SECOND_SPOT = new Point(5,2);
 	private static final Point THIRD_SPOT = new Point(1,10);
 	private static final Point FOURTH_SPOT = new Point(5,10);
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		LoadResources lr = new LoadResources("..\\Kings And Things\\" + Constants.RESOURCE_PATH,false);
-		lr.run();
-		PropertyConfigurator.configure("Log Settings\\serverLog4j.properties");
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
-
-	@Before
-	public void setUp() throws Exception {
-		game = new CommandHandlerManager();
-		game.initialize();
-		receiver = new StartGameReceiver();
-		
-		p1 = new Player(new PlayerInfo("Erik",0,true));
-		p2 = new Player(new PlayerInfo("Archit",1,true));
-		p3 = new Player(new PlayerInfo("Shariar",2,true));
-		p4 = new Player(new PlayerInfo("Nadra",3,true));
-		
-		HashSet<Player> players = new HashSet<Player>();
-		players.add(p1);
-		players.add(p2);
-		players.add(p3);
-		players.add(p4);
-		new StartSetupPhase(true, players, this).postInternalEvent();
-		Thread.sleep(EVENT_DISPATCH_WAITING_TIME);
-		
-		p1 = getPlayerAtIndex(0);
-		p2 = getPlayerAtIndex(1);
-		p3 = getPlayerAtIndex(2);
-		p4 = getPlayerAtIndex(3);
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		game.dispose();
-		receiver.unregisterFromEventBus();
-	}
-
+	
 	@Test
 	public void testStartNewGame() {
 		assertEquals(4,currentState.getPlayers().size());
@@ -722,7 +654,7 @@ public class TestGameFlowManager {
 
 		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
 		assertEquals(0,currentState.getHitsOnPlayer(p4.getID()));
-		assertEquals(CombatPhase.ATTACKER_RETREAT, currentState.getCurrentCombatPhase());
+		assertEquals(CombatPhase.ATTACKER_ONE_RETREAT, currentState.getCurrentCombatPhase());
 
 		getCombatCommandHandler().endPlayerTurn(p1.getID());
 		assertEquals(CombatPhase.DEFENDER_RETREAT, currentState.getCurrentCombatPhase());
@@ -750,7 +682,7 @@ public class TestGameFlowManager {
 
 		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
 		assertEquals(0,currentState.getHitsOnPlayer(p4.getID()));
-		assertEquals(CombatPhase.ATTACKER_RETREAT, currentState.getCurrentCombatPhase());
+		assertEquals(CombatPhase.ATTACKER_ONE_RETREAT, currentState.getCurrentCombatPhase());
 
 		getCombatCommandHandler().endPlayerTurn(p1.getID());
 		assertEquals(CombatPhase.DEFENDER_RETREAT, currentState.getCurrentCombatPhase());
@@ -776,7 +708,7 @@ public class TestGameFlowManager {
 
 		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
 		assertEquals(0,currentState.getHitsOnPlayer(p4.getID()));
-		assertEquals(CombatPhase.ATTACKER_RETREAT, currentState.getCurrentCombatPhase());
+		assertEquals(CombatPhase.ATTACKER_ONE_RETREAT, currentState.getCurrentCombatPhase());
 
 		getCombatCommandHandler().endPlayerTurn(p1.getID());
 		assertEquals(CombatPhase.DEFENDER_RETREAT, currentState.getCurrentCombatPhase());
@@ -800,7 +732,7 @@ public class TestGameFlowManager {
 
 		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
 		assertEquals(0,currentState.getHitsOnPlayer(p4.getID()));
-		assertEquals(CombatPhase.ATTACKER_RETREAT, currentState.getCurrentCombatPhase());
+		assertEquals(CombatPhase.ATTACKER_ONE_RETREAT, currentState.getCurrentCombatPhase());
 
 		getCombatCommandHandler().endPlayerTurn(p1.getID());
 		assertEquals(CombatPhase.DEFENDER_RETREAT, currentState.getCurrentCombatPhase());
@@ -1095,7 +1027,7 @@ public class TestGameFlowManager {
 		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
 		assertEquals(3,currentState.getCombatHex().getFightingThingsInHex().size());
 
-		assertEquals(CombatPhase.ATTACKER_RETREAT, currentState.getCurrentCombatPhase());
+		assertEquals(CombatPhase.ATTACKER_THREE_RETREAT, currentState.getCurrentCombatPhase());
 		getCombatCommandHandler().endPlayerTurn(p4.getID());
 		assertEquals(CombatPhase.DEFENDER_RETREAT, currentState.getCurrentCombatPhase());
 		getCombatCommandHandler().endPlayerTurn(p1.getID());
@@ -1105,7 +1037,7 @@ public class TestGameFlowManager {
 		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Giant_Ape",p4,new Point(2,3)),6);
 		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Buffalo_Herd",p4,new Point(2,3)),6);
 
-		assertEquals(CombatPhase.ATTACKER_RETREAT, currentState.getCurrentCombatPhase());
+		assertEquals(CombatPhase.ATTACKER_THREE_RETREAT, currentState.getCurrentCombatPhase());
 		getCombatCommandHandler().endPlayerTurn(p4.getID());
 		assertEquals(CombatPhase.DEFENDER_RETREAT, currentState.getCurrentCombatPhase());
 		getCombatCommandHandler().endPlayerTurn(p1.getID());
@@ -1125,7 +1057,7 @@ public class TestGameFlowManager {
 		getCombatCommandHandler().applyHits(getPlayerBoardThingByName("Keep",p1,new Point(2,3)), p1.getID(), 1);
 		assertEquals(1,currentState.getBoard().getHexByXY(2,3).getBuilding().getValue());
 
-		assertEquals(CombatPhase.ATTACKER_RETREAT, currentState.getCurrentCombatPhase());
+		assertEquals(CombatPhase.ATTACKER_THREE_RETREAT, currentState.getCurrentCombatPhase());
 		getCombatCommandHandler().endPlayerTurn(p4.getID());
 		assertEquals(CombatPhase.DEFENDER_RETREAT, currentState.getCurrentCombatPhase());
 		getCombatCommandHandler().endPlayerTurn(p1.getID());
@@ -1179,6 +1111,8 @@ public class TestGameFlowManager {
 		assertEquals(true,p4.getOwnedThingsOnBoard().contains(currentState.getBoard().getHexByXY(2,3).getBuilding()));
 
 		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p4.getID()));
 	}
 	
 	@Test
@@ -1215,21 +1149,6 @@ public class TestGameFlowManager {
 		assertEquals(p3,currentState.getActivePhasePlayer());
 	}
 	
-	private void assertPlayerAtIndexIsActiveForPhase(int index)
-	{
-		assertEquals(currentState.getPlayerOrder().get(index).intValue(),currentState.getActivePhasePlayer().getID());
-	}
-
-	private void assertPlayerAtIndexIsActiveForTurn(int index)
-	{
-		assertEquals(currentState.getPlayerOrder().get(index).intValue(),currentState.getActiveTurnPlayer().getID());
-	}
-	
-	private Player getPlayerAtIndex(int index)
-	{
-		return currentState.getPlayerByPlayerNumber(currentState.getPlayerOrder().get(index));
-	}
-	
 	private void validateThirdHexGivenState()
 	{
 		assertEquals(3,p1.getOwnedHexes().size());
@@ -1252,87 +1171,6 @@ public class TestGameFlowManager {
 		assertEquals(true,p3.getOwnedHexes().contains(currentState.getBoard().getHexByXY(2, 9).getHex()));
 		assertEquals(true,p4.getOwnedHexes().contains(currentState.getBoard().getHexByXY(1, 4).getHex()));
 		
-	}
-	
-	private ITileProperties getPlayerTrayThingByName(String name, Player p)
-	{
-		for(ITileProperties tp : p.getTrayThings())
-		{
-			if(tp.getName().equals(name))
-			{
-				return tp;
-			}
-		}
-		
-		return null;
-	}
-	
-	private ITileProperties getPlayerBoardThingByName(String name, Player p, Point location)
-	{
-		return getPlayerBoardThingByName(name, p, location,0);
-	}
-	
-	private ITileProperties getPlayerBoardThingByName(String name, Player p, Point location,int skipCount)
-	{
-		int matches = 0;
-		for(ITileProperties tp : currentState.getBoard().getHexByXY(location.x, location.y).getThingsInHexOwnedByPlayer(p))
-		{
-			if(tp.getName().equals(name))
-			{
-				if(matches >= skipCount)
-				{
-					return tp;
-				}
-				matches++;
-			}
-		}
-		
-		return null;
-	}
-	
-	private CommandHandler getHandlerByClass(Class<? extends CommandHandler> clazz)
-	{
-		for(CommandHandler h : game.getCommandHandlers())
-		{
-			if(h.getClass().equals(clazz))
-			{
-				return h;
-			}
-		}
-		return null;
-	}
-	
-	private CombatCommandHandler getCombatCommandHandler()
-	{
-		return (CombatCommandHandler) getHandlerByClass(CombatCommandHandler.class);
-	}
-	
-	private ConstructBuildingCommandHandler getConstructBuildingCommandHandler()
-	{
-		return (ConstructBuildingCommandHandler) getHandlerByClass(ConstructBuildingCommandHandler.class);
-	}
-
-	
-	private MovementCommandHandler getMovementCommandHandler()
-	{
-		return (MovementCommandHandler) getHandlerByClass(MovementCommandHandler.class);
-	}
-
-	
-	private RecruitingThingsCommandHandler getRecruitingThingsCommandHandler()
-	{
-		return (RecruitingThingsCommandHandler) getHandlerByClass(RecruitingThingsCommandHandler.class);
-	}
-
-	
-	private SetupPhaseCommandHandler getSetupPhaseCommandHandler()
-	{
-		return (SetupPhaseCommandHandler) getHandlerByClass(SetupPhaseCommandHandler.class);
-	}
-	
-	private RecruitSpecialCharacterCommandHandler getSpecialCharRecruitHandler()
-	{
-		return (RecruitSpecialCharacterCommandHandler) getHandlerByClass(RecruitSpecialCharacterCommandHandler.class);
 	}
 	
 	private void turnTwoFirstCombatUpToDetermineDamageRoll()
@@ -1415,7 +1253,7 @@ public class TestGameFlowManager {
 		getCombatCommandHandler().applyHits(getPlayerBoardThingByName("Pterodactyl_Warriors",p2,new Point(4,5)), p2.getID(), 1);
 		getCombatCommandHandler().applyHits(getPlayerBoardThingByName("Sandworm",p2,new Point(4,5)), p2.getID(), 1);
 		assertEquals(0,currentState.getHitsOnPlayer(p2.getID()));
-		assertEquals(CombatPhase.ATTACKER_RETREAT, currentState.getCurrentCombatPhase());
+		assertEquals(CombatPhase.ATTACKER_ONE_RETREAT, currentState.getCurrentCombatPhase());
 		assertEquals(5,currentState.getCombatHex().getFightingThingsInHex().size());
 
 		//no reteating!
@@ -1451,18 +1289,6 @@ public class TestGameFlowManager {
 			{
 				assertEquals(false,thing.isFaceUp());
 			}
-		}
-	}
-	
-	private class StartGameReceiver extends AbstractUpdateReceiver<SetupPhaseComplete>{
-
-		protected StartGameReceiver() {
-			super( INTERNAL, -1, TestGameFlowManager.this);
-		}
-
-		@Override
-		public void handlePublic( SetupPhaseComplete update) {
-			currentState = update.getCurrentState();
 		}
 	}
 }
