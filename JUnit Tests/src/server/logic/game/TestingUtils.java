@@ -11,8 +11,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import server.event.commands.SetupPhaseComplete;
-import server.event.commands.StartSetupPhase;
+import server.event.SetupPhaseComplete;
+import server.event.commands.StartSetupPhaseCommand;
 import server.logic.game.handlers.CombatCommandHandler;
 import server.logic.game.handlers.CommandHandler;
 import server.logic.game.handlers.ConstructBuildingCommandHandler;
@@ -65,7 +65,7 @@ public abstract class TestingUtils
 		players.add(p2);
 		players.add(p3);
 		players.add(p4);
-		new StartSetupPhase(true, players, this).postInternalEvent();
+		new StartSetupPhaseCommand(true, players, this).postInternalEvent();
 		Thread.sleep(EVENT_DISPATCH_WAITING_TIME);
 		
 		p1 = getPlayerAtIndex(0);
