@@ -11,7 +11,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import server.event.SetupPhaseComplete;
+import server.event.GameStarted;
 import server.event.commands.StartSetupPhaseCommand;
 import server.logic.game.handlers.CombatCommandHandler;
 import server.logic.game.handlers.CommandHandler;
@@ -20,7 +20,10 @@ import server.logic.game.handlers.MovementCommandHandler;
 import server.logic.game.handlers.RecruitSpecialCharacterCommandHandler;
 import server.logic.game.handlers.RecruitingThingsCommandHandler;
 import server.logic.game.handlers.SetupPhaseCommandHandler;
+
 import common.Constants;
+import common.Constants.RollReason;
+import common.Constants.SetupPhase;
 import common.event.AbstractUpdateReceiver;
 import common.game.ITileProperties;
 import common.game.LoadResources;
@@ -67,6 +70,24 @@ public abstract class TestingUtils
 		players.add(p4);
 		new StartSetupPhaseCommand(true, players, this).postInternalEvent();
 		Thread.sleep(EVENT_DISPATCH_WAITING_TIME);
+		
+		assertEquals(SetupPhase.DETERMINE_PLAYER_ORDER, currentState.getCurrentSetupPhase());
+		
+		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p1.getID(), null, 3);
+		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p4.getID(), null, 2);
+		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p1.getID(), null, 4);
+		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p4.getID(), null, 3);
+		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p3.getID(), null, 5);
+		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p3.getID(), null, 5);
+		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p2.getID(), null, 3);
+		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p2.getID(), null, 3);
+		
+		assertEquals(SetupPhase.PICK_FIRST_HEX, currentState.getCurrentSetupPhase());
+		assertEquals(p3.getID(),currentState.getPlayerOrder().get(0).intValue());
+		assertEquals(p1.getID(),currentState.getPlayerOrder().get(1).intValue());
+		assertEquals(p2.getID(),currentState.getPlayerOrder().get(2).intValue());
+		assertEquals(p4.getID(),currentState.getPlayerOrder().get(3).intValue());
+		
 		
 		p1 = getPlayerAtIndex(0);
 		p2 = getPlayerAtIndex(1);
@@ -176,14 +197,14 @@ public abstract class TestingUtils
 		return currentState.getPlayerByPlayerNumber(currentState.getPlayerOrder().get(index));
 	}
 	
-	private class StartGameReceiver extends AbstractUpdateReceiver<SetupPhaseComplete>{
+	private class StartGameReceiver extends AbstractUpdateReceiver<GameStarted>{
 
 		protected StartGameReceiver() {
 			super( INTERNAL, -1, TestingUtils.this);
 		}
 
 		@Override
-		public void handlePublic( SetupPhaseComplete update) {
+		public void handlePublic( GameStarted update) {
 			currentState = update.getCurrentState();
 		}
 	}
