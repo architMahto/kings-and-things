@@ -75,12 +75,18 @@ public abstract class TestingUtils
 		
 		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p1.getID(), null, 3);
 		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p4.getID(), null, 2);
-		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p1.getID(), null, 4);
+		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p1.getID(), null, 3);
 		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p4.getID(), null, 3);
 		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p3.getID(), null, 5);
 		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p3.getID(), null, 5);
 		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p2.getID(), null, 3);
 		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p2.getID(), null, 3);
+		
+		assertEquals(SetupPhase.DETERMINE_PLAYER_ORDER, currentState.getCurrentSetupPhase());
+		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p2.getID(), null, 3);
+		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p2.getID(), null, 3);
+		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p1.getID(), null, 3);
+		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p1.getID(), null, 4);
 		
 		assertEquals(SetupPhase.PICK_FIRST_HEX, currentState.getCurrentSetupPhase());
 		assertEquals(p3.getID(),currentState.getPlayerOrder().get(0).intValue());
