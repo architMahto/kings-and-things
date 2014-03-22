@@ -68,7 +68,7 @@ public abstract class TestingUtils
 		players.add(p2);
 		players.add(p3);
 		players.add(p4);
-		new StartSetupPhaseCommand(true, players, this).postInternalEvent();
+		new StartSetupPhaseCommand(true, players).postInternalEvent();
 		Thread.sleep(EVENT_DISPATCH_WAITING_TIME);
 		
 		assertEquals(SetupPhase.DETERMINE_PLAYER_ORDER, currentState.getCurrentSetupPhase());
