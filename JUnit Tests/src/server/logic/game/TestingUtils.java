@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 
 import server.event.GameStarted;
-import server.event.commands.StartSetupPhaseCommand;
+import server.event.internal.StartSetupPhaseCommand;
 import server.logic.game.handlers.CombatCommandHandler;
 import server.logic.game.handlers.CommandHandler;
 import server.logic.game.handlers.ConstructBuildingCommandHandler;
@@ -20,7 +20,6 @@ import server.logic.game.handlers.MovementCommandHandler;
 import server.logic.game.handlers.RecruitSpecialCharacterCommandHandler;
 import server.logic.game.handlers.RecruitingThingsCommandHandler;
 import server.logic.game.handlers.SetupPhaseCommandHandler;
-
 import common.Constants;
 import common.Constants.RollReason;
 import common.Constants.SetupPhase;
