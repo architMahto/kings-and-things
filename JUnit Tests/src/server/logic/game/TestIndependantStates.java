@@ -10,10 +10,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import server.logic.exceptions.NoMoreTilesException;
+import common.Constants.BuildableBuilding;
 import common.Constants.CombatPhase;
 import common.Constants.RegularPhase;
 import common.Constants.RollReason;
 import common.Constants.SetupPhase;
+import common.game.HexState;
 import common.game.ITileProperties;
 
 public class TestIndependantStates extends TestingUtils
@@ -73,6 +75,204 @@ public class TestIndependantStates extends TestingUtils
 		{
 			assertEquals(false, tp.isSpecialIncomeCounter());
 		}
+	}
+	
+	@Test
+	public void testWinFromSingleCitadelConstruction() throws NoMoreTilesException
+	{
+		p1.addGold(25);
+		HashSet<ITileProperties> unownedHexes = new HashSet<ITileProperties>();
+		for(HexState hs : currentState.getBoard().getHexesAsList())
+		{
+			if(!p1.getOwnedHexes().contains(hs.getHex()) && !p2.getOwnedHexes().contains(hs.getHex()) && !p3.getOwnedHexes().contains(hs.getHex()) && !p4.getOwnedHexes().contains(hs.getHex()))
+			{
+				unownedHexes.add(hs.getHex());
+			}
+		}
+		for(ITileProperties tp : unownedHexes)
+		{
+			p1.addOwnedHex(tp);
+		}
+		removeAllThingsFromHexForPlayer(p1);
+		removeAllThingsFromHexForPlayer(p2);
+		removeAllThingsFromHexForPlayer(p3);
+		removeAllThingsFromHexForPlayer(p4);
+		//RECRUITING_CHARACTERS, RECRUITING_THINGS, RANDOM_EVENTS, MOVEMENT, COMBAT, CONSTRUCTION, SPECIAL_POWERS
+		currentState.setCurrentRegularPhase(RegularPhase.RECRUITING_CHARACTERS);
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+		getCombatCommandHandler().endPlayerTurn(p2.getID());
+		getCombatCommandHandler().endPlayerTurn(p3.getID());
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p1.getID());
+		assertEquals(10,p1.getTrayThings().size());
+		getRecruitingThingsCommandHandler().discardThings(new HashSet<ITileProperties>(p1.getCardsInHand()), p1.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p1.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p2.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p2.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p3.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p3.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p4.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p4.getID());
+
+		for(int i=0; i<3; i++)
+		{
+			getCombatCommandHandler().endPlayerTurn(p1.getID());
+			getCombatCommandHandler().endPlayerTurn(p2.getID());
+			getCombatCommandHandler().endPlayerTurn(p3.getID());
+			getCombatCommandHandler().endPlayerTurn(p4.getID());
+		}
+
+		getConstructBuildingCommandHandler().constructBuilding(BuildableBuilding.Tower, p1.getID(), currentState.getBoard().getHexByXY(1, 2).getHex());
+
+		for(int i=0; i<2; i++)
+		{
+			getCombatCommandHandler().endPlayerTurn(p1.getID());
+			getCombatCommandHandler().endPlayerTurn(p2.getID());
+			getCombatCommandHandler().endPlayerTurn(p3.getID());
+			getCombatCommandHandler().endPlayerTurn(p4.getID());
+		}
+		getCombatCommandHandler().endPlayerTurn(p2.getID());
+		getCombatCommandHandler().endPlayerTurn(p3.getID());
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+		
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p2.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p2.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p3.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p3.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p4.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p4.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p1.getID());
+		assertEquals(10,p1.getTrayThings().size());
+		getRecruitingThingsCommandHandler().discardThings(new HashSet<ITileProperties>(p1.getCardsInHand()), p1.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p1.getID());
+
+		for(int i=0; i<3; i++)
+		{
+			getCombatCommandHandler().endPlayerTurn(p2.getID());
+			getCombatCommandHandler().endPlayerTurn(p3.getID());
+			getCombatCommandHandler().endPlayerTurn(p4.getID());
+			getCombatCommandHandler().endPlayerTurn(p1.getID());
+		}
+
+		getCombatCommandHandler().endPlayerTurn(p2.getID());
+		getCombatCommandHandler().endPlayerTurn(p3.getID());
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		getConstructBuildingCommandHandler().constructBuilding(BuildableBuilding.Keep, p1.getID(), currentState.getBoard().getHexByXY(1, 2).getHex());
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+		
+		getCombatCommandHandler().endPlayerTurn(p2.getID());
+		getCombatCommandHandler().endPlayerTurn(p3.getID());
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+
+		getCombatCommandHandler().endPlayerTurn(p3.getID());
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+		getCombatCommandHandler().endPlayerTurn(p2.getID());
+		
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p3.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p3.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p4.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p4.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p1.getID());
+		assertEquals(10,p1.getTrayThings().size());
+		getRecruitingThingsCommandHandler().discardThings(new HashSet<ITileProperties>(p1.getCardsInHand()), p1.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p1.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p2.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p2.getID());
+
+		for(int i=0; i<3; i++)
+		{
+			getCombatCommandHandler().endPlayerTurn(p3.getID());
+			getCombatCommandHandler().endPlayerTurn(p4.getID());
+			getCombatCommandHandler().endPlayerTurn(p1.getID());
+			getCombatCommandHandler().endPlayerTurn(p2.getID());
+		}
+
+		getCombatCommandHandler().endPlayerTurn(p3.getID());
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		getConstructBuildingCommandHandler().constructBuilding(BuildableBuilding.Castle, p1.getID(), currentState.getBoard().getHexByXY(1, 2).getHex());
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+		getCombatCommandHandler().endPlayerTurn(p2.getID());
+
+		getCombatCommandHandler().endPlayerTurn(p3.getID());
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+		getCombatCommandHandler().endPlayerTurn(p2.getID());
+
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+		getCombatCommandHandler().endPlayerTurn(p2.getID());
+		getCombatCommandHandler().endPlayerTurn(p3.getID());
+
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p4.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p4.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p1.getID());
+		assertEquals(10,p1.getTrayThings().size());
+		getRecruitingThingsCommandHandler().discardThings(new HashSet<ITileProperties>(p1.getCardsInHand()), p1.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p1.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p2.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p2.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p3.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p3.getID());
+
+		for(int i=0; i<3; i++)
+		{
+			getCombatCommandHandler().endPlayerTurn(p4.getID());
+			getCombatCommandHandler().endPlayerTurn(p1.getID());
+			getCombatCommandHandler().endPlayerTurn(p2.getID());
+			getCombatCommandHandler().endPlayerTurn(p3.getID());
+		}
+
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		getConstructBuildingCommandHandler().constructBuilding(BuildableBuilding.Citadel, p1.getID(), currentState.getBoard().getHexByXY(1, 2).getHex());
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+		getCombatCommandHandler().endPlayerTurn(p2.getID());
+		getCombatCommandHandler().endPlayerTurn(p3.getID());
+
+		assertEquals(true,null == currentState.getWinningPlayer());
+
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+		getCombatCommandHandler().endPlayerTurn(p2.getID());
+		getCombatCommandHandler().endPlayerTurn(p3.getID());
+
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+		getCombatCommandHandler().endPlayerTurn(p2.getID());
+		getCombatCommandHandler().endPlayerTurn(p3.getID());
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p1.getID());
+		assertEquals(10,p1.getTrayThings().size());
+		getRecruitingThingsCommandHandler().discardThings(new HashSet<ITileProperties>(p1.getCardsInHand()), p1.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p1.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p2.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p2.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p3.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p3.getID());
+		getRecruitingThingsCommandHandler().recruitThings(0, new ArrayList<ITileProperties>(), p4.getID());
+		getRecruitingThingsCommandHandler().endPlayerTurn(p4.getID());
+
+		for(int i=0; i<3; i++)
+		{
+			getCombatCommandHandler().endPlayerTurn(p1.getID());
+			getCombatCommandHandler().endPlayerTurn(p2.getID());
+			getCombatCommandHandler().endPlayerTurn(p3.getID());
+			getCombatCommandHandler().endPlayerTurn(p4.getID());
+		}
+
+		assertEquals(true,null == currentState.getWinningPlayer());
+
+		getCombatCommandHandler().endPlayerTurn(p1.getID());
+		assertEquals(true,null == currentState.getWinningPlayer());
+		getCombatCommandHandler().endPlayerTurn(p2.getID());
+		assertEquals(true,null == currentState.getWinningPlayer());
+		getCombatCommandHandler().endPlayerTurn(p3.getID());
+		assertEquals(true,null == currentState.getWinningPlayer());
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		assertEquals(p1,currentState.getWinningPlayer());
 	}
 	
 	@Test
@@ -864,6 +1064,18 @@ public class TestIndependantStates extends TestingUtils
 			ITileProperties thing = currentState.getCup().drawTile();
 			p.addOwnedThingOnBoard(thing);
 			currentState.getBoard().getHexByXY(3, 6).addThingToHex(thing);
+		}
+	}
+	
+	private void removeAllThingsFromHexForPlayer(Player p)
+	{
+		HexState hex = currentState.getBoard().getHexByXY(3, 6);
+		HashSet<ITileProperties> things = new HashSet<ITileProperties>(p.getOwnedThingsOnBoard());
+		for(ITileProperties thing : things)
+		{
+			p.removeOwnedThingOnBoard(thing);
+			hex.removeThingFromHex(thing);
+			currentState.getCup().reInsertTile(thing);
 		}
 	}
 }
