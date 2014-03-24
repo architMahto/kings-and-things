@@ -17,6 +17,7 @@ import common.Constants.RollReason;
 import common.Constants.SetupPhase;
 import common.game.HexState;
 import common.game.ITileProperties;
+import common.game.Player;
 
 public class TestIndependantStates extends TestingUtils
 {

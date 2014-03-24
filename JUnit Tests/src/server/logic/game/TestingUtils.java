@@ -26,6 +26,7 @@ import common.Constants.SetupPhase;
 import common.event.AbstractUpdateReceiver;
 import common.game.ITileProperties;
 import common.game.LoadResources;
+import common.game.Player;
 import common.game.PlayerInfo;
 
 public abstract class TestingUtils
