@@ -29,6 +29,8 @@ import common.game.LoadResources;
 import common.game.Player;
 import common.game.PlayerInfo;
 
+import static common.Constants.PUBLIC;
+
 public abstract class TestingUtils
 {
 	private static final int EVENT_DISPATCH_WAITING_TIME = 500;
@@ -206,7 +208,7 @@ public abstract class TestingUtils
 	private class StartGameReceiver extends AbstractUpdateReceiver<GameStarted>{
 
 		protected StartGameReceiver() {
-			super( INTERNAL, -1, TestingUtils.this);
+			super( INTERNAL, PUBLIC, TestingUtils.this);
 		}
 
 		@Override
