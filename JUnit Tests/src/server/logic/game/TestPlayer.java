@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import common.Constants;
 import common.game.Player;
 import common.game.PlayerInfo;
 
@@ -24,7 +25,7 @@ public class TestPlayer {
 
 	@Before
 	public void setUp() throws Exception {
-		p = new Player(new PlayerInfo("some name",1,true));
+		p = new Player(new PlayerInfo("some name",Constants.PLAYER_1_ID,true));
 	}
 
 	@After
@@ -33,7 +34,7 @@ public class TestPlayer {
 
 	@Test(expected=IllegalArgumentException.class)
 	public void testPlayer() {
-		new Player(new PlayerInfo(null,2,true));
+		new Player(new PlayerInfo(null,Constants.PLAYER_1_ID,true));
 	}
 
 	@Test(expected=IllegalArgumentException.class)
@@ -43,8 +44,8 @@ public class TestPlayer {
 
 	@Test
 	public void testPlayer2() {
-		new Player(new PlayerInfo("sjkdfh",-2,true));
-		new Player(new PlayerInfo("dfghdfg",0,true));
+		new Player(new PlayerInfo("sjkdfh",Constants.PLAYER_1_ID,true));
+		new Player(new PlayerInfo("dfghdfg",Constants.PLAYER_1_ID,true));
 	}
 	
 	@Test

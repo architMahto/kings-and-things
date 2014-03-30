@@ -61,10 +61,10 @@ public abstract class TestingUtils
 		game.initialize();
 		receiver = new StartGameReceiver();
 		
-		p1 = new Player(new PlayerInfo("Erik",0,true));
-		p2 = new Player(new PlayerInfo("Archit",1,true));
-		p3 = new Player(new PlayerInfo("Shariar",2,true));
-		p4 = new Player(new PlayerInfo("Nadra",3,true));
+		p1 = new Player(new PlayerInfo("Erik",Constants.PLAYER_1_ID,true));
+		p2 = new Player(new PlayerInfo("Archit",Constants.PLAYER_2_ID,true));
+		p3 = new Player(new PlayerInfo("Shariar",Constants.PLAYER_3_ID,true));
+		p4 = new Player(new PlayerInfo("Nadra",Constants.PLAYER_4_ID,true));
 		
 		HashSet<Player> players = new HashSet<Player>();
 		players.add(p1);
