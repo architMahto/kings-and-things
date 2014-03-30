@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 
 import server.event.GameStarted;
+import server.event.internal.DoneRollingCommand;
 import server.event.internal.StartSetupPhaseCommand;
 import server.logic.game.handlers.CombatCommandHandler;
 import server.logic.game.handlers.CommandHandler;
@@ -28,7 +29,7 @@ import common.game.ITileProperties;
 import common.game.LoadResources;
 import common.game.Player;
 import common.game.PlayerInfo;
-
+import common.game.Roll;
 import static common.Constants.PUBLIC;
 
 public abstract class TestingUtils
@@ -75,20 +76,18 @@ public abstract class TestingUtils
 		
 		assertEquals(SetupPhase.DETERMINE_PLAYER_ORDER, currentState.getCurrentSetupPhase());
 		
-		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p1.getID(), null, 3);
-		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p4.getID(), null, 2);
-		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p1.getID(), null, 3);
-		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p4.getID(), null, 3);
-		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p3.getID(), null, 5);
-		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p3.getID(), null, 5);
-		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p2.getID(), null, 3);
-		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p2.getID(), null, 3);
+		getCombatCommandHandler().rollDice(new Roll(1,null,RollReason.DETERMINE_PLAYER_ORDER, p1.getID(), 3));
+		getCombatCommandHandler().rollDice(new Roll(2,null,RollReason.DETERMINE_PLAYER_ORDER, p4.getID(), 2));
+		getCombatCommandHandler().rollDice(new Roll(1,null,RollReason.DETERMINE_PLAYER_ORDER, p1.getID(), 3));
+		getCombatCommandHandler().rollDice(new Roll(1,null,RollReason.DETERMINE_PLAYER_ORDER, p3.getID(), 5));
+		getCombatCommandHandler().rollDice(new Roll(1,null,RollReason.DETERMINE_PLAYER_ORDER, p3.getID(), 5));
+		getCombatCommandHandler().rollDice(new Roll(1,null,RollReason.DETERMINE_PLAYER_ORDER, p2.getID(), 3));
+		getCombatCommandHandler().rollDice(new Roll(1,null,RollReason.DETERMINE_PLAYER_ORDER, p2.getID(), 3));
 		
 		assertEquals(SetupPhase.DETERMINE_PLAYER_ORDER, currentState.getCurrentSetupPhase());
-		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p2.getID(), null, 3);
-		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p2.getID(), null, 3);
-		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p1.getID(), null, 3);
-		getCombatCommandHandler().rollDice(RollReason.DETERMINE_PLAYER_ORDER, p1.getID(), null, 4);
+		getCombatCommandHandler().rollDice(new Roll(2,null,RollReason.DETERMINE_PLAYER_ORDER, p2.getID(), 3));
+		getCombatCommandHandler().rollDice(new Roll(1,null,RollReason.DETERMINE_PLAYER_ORDER, p1.getID(), 3));
+		getCombatCommandHandler().rollDice(new Roll(1,null,RollReason.DETERMINE_PLAYER_ORDER, p1.getID(), 4));
 		
 		assertEquals(SetupPhase.PICK_FIRST_HEX, currentState.getCurrentSetupPhase());
 		assertEquals(p3.getID(),currentState.getPlayerOrder().get(0).intValue());

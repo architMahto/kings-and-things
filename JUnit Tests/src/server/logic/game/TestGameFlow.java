@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import server.logic.exceptions.NoMoreTilesException;
 import server.logic.game.handlers.RecruitSpecialCharacterCommandHandler;
-
 import common.Constants;
 import common.Constants.BuildableBuilding;
 import common.Constants.Building;
@@ -20,6 +19,7 @@ import common.Constants.RollReason;
 import common.Constants.SetupPhase;
 import common.game.HexState;
 import common.game.ITileProperties;
+import common.game.Roll;
 
 public class TestGameFlow extends TestingUtils{
 
@@ -446,7 +446,7 @@ public class TestGameFlow extends TestingUtils{
 		{
 			assertEquals(false,tp.isFaceUp());
 		}
-		getCombatCommandHandler().rollDice(RollReason.EXPLORE_HEX, p1.getID(), currentState.getBoard().getHexByXY(3, 2).getHex(),1);
+		getCombatCommandHandler().rollDice(new Roll(1,currentState.getBoard().getHexByXY(3, 2).getHex(),RollReason.EXPLORE_HEX, p1.getID(), 1));
 		assertEquals(4, p1.getOwnedHexes().size());
 		assertEquals(true,p1.getOwnedHexes().contains(currentState.getBoard().getHexByXY(3, 2).getHex()));
 		assertEquals(7,currentState.getBoard().getHexByXY(3, 2).getCreaturesInHex().size());
@@ -459,7 +459,7 @@ public class TestGameFlow extends TestingUtils{
 		
 
 		getCombatCommandHandler().resolveCombat(currentState.getBoard().getHexByXY(4, 7).getHex(), p2.getID());
-		getCombatCommandHandler().rollDice(RollReason.EXPLORE_HEX, p2.getID(), currentState.getBoard().getHexByXY(4, 7).getHex(),1);
+		getCombatCommandHandler().rollDice(new Roll(1,currentState.getBoard().getHexByXY(4, 7).getHex(),RollReason.EXPLORE_HEX, p2.getID(),1));
 		assertEquals(4, p2.getOwnedHexes().size());
 		assertEquals(true,p2.getOwnedHexes().contains(currentState.getBoard().getHexByXY(4, 7).getHex()));
 		assertEquals(10,currentState.getBoard().getHexByXY(4, 7).getCreaturesInHex().size());
@@ -593,7 +593,7 @@ public class TestGameFlow extends TestingUtils{
 	{
 		turnTwoFirstCombatUpToDetermineDamageRoll();
 		
-		getCombatCommandHandler().rollDice(RollReason.CALCULATE_DAMAGE_TO_TILE, p2.getID(), currentState.getCombatHex().getBuilding(),3);
+		getCombatCommandHandler().rollDice(new Roll(1,currentState.getCombatHex().getBuilding(),RollReason.CALCULATE_DAMAGE_TO_TILE, p2.getID(),3));
 
 		assertEquals(CombatPhase.PLACE_THINGS, currentState.getCurrentCombatPhase());
 		
@@ -631,19 +631,19 @@ public class TestGameFlow extends TestingUtils{
 		}
 		
 		assertEquals(CombatPhase.MELEE_ATTACK, currentState.getCurrentCombatPhase());
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Tribesmen",p4,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Giant_Lizard",p4,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Villains",p4,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Tigers",p4,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Tower",p4,new Point(2,3)),3);
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Tribesmen",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Giant_Lizard",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Villains",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Tigers",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Tower",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),3));
 
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Skeletons",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Watusi",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Goblins",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Ogre",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Cyclops",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Mountain_Men",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Goblins",p1,new Point(2,3),1),3);
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Skeletons",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Watusi",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Goblins",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Ogre",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Cyclops",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Mountain_Men",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Goblins",p1,new Point(2,3),1),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
 
 		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
@@ -661,17 +661,17 @@ public class TestGameFlow extends TestingUtils{
 		getCombatCommandHandler().endPlayerTurn(p4.getID());
 		assertEquals(CombatPhase.MELEE_ATTACK, currentState.getCurrentCombatPhase());
 
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Giant_Lizard",p4,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Villains",p4,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Tigers",p4,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Tower",p4,new Point(2,3)),3);
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Giant_Lizard",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Villains",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Tigers",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Tower",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),3));
 
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Watusi",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Goblins",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Ogre",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Cyclops",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Mountain_Men",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Goblins",p1,new Point(2,3),1),3);
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Watusi",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Goblins",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Ogre",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Cyclops",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Mountain_Men",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Goblins",p1,new Point(2,3),1),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
 
 		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
@@ -689,15 +689,15 @@ public class TestGameFlow extends TestingUtils{
 		getCombatCommandHandler().endPlayerTurn(p4.getID());
 		assertEquals(CombatPhase.MELEE_ATTACK, currentState.getCurrentCombatPhase());
 
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Villains",p4,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Tigers",p4,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Tower",p4,new Point(2,3)),3);
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Villains",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Tigers",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Tower",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),3));
 
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Watusi",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Ogre",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Cyclops",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Mountain_Men",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Goblins",p1,new Point(2,3)),3);
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Watusi",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Ogre",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Cyclops",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Mountain_Men",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Goblins",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
 
 		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
@@ -715,13 +715,13 @@ public class TestGameFlow extends TestingUtils{
 		getCombatCommandHandler().endPlayerTurn(p4.getID());
 		assertEquals(CombatPhase.MELEE_ATTACK, currentState.getCurrentCombatPhase());
 
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Villains",p4,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Tigers",p4,new Point(2,3)),3);
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Villains",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Tigers",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),3));
 
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Watusi",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Ogre",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Cyclops",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Mountain_Men",p1,new Point(2,3)),3);
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Watusi",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Ogre",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Cyclops",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Mountain_Men",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
 
 		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
@@ -739,11 +739,11 @@ public class TestGameFlow extends TestingUtils{
 		getCombatCommandHandler().endPlayerTurn(p4.getID());
 		assertEquals(CombatPhase.MELEE_ATTACK, currentState.getCurrentCombatPhase());
 
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Tigers",p4,new Point(2,3)),3);
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Tigers",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),3));
 
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Watusi",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Ogre",p1,new Point(2,3)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Cyclops",p1,new Point(2,3)),3);
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Watusi",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Ogre",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Cyclops",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
 
 		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
@@ -771,7 +771,7 @@ public class TestGameFlow extends TestingUtils{
 			}
 		}
 		
-		getCombatCommandHandler().rollDice(RollReason.CALCULATE_DAMAGE_TO_TILE, p1.getID(), currentState.getCombatHex().getBuilding(),3);
+		getCombatCommandHandler().rollDice(new Roll(1,currentState.getCombatHex().getBuilding(),RollReason.CALCULATE_DAMAGE_TO_TILE, p1.getID(),3));
 
 		assertEquals(CombatPhase.PLACE_THINGS, currentState.getCurrentCombatPhase());
 
@@ -862,8 +862,7 @@ public class TestGameFlow extends TestingUtils{
 		
 		RecruitSpecialCharacterCommandHandler handler = getSpecialCharRecruitHandler();
 		handler.handleSpecialCharacterRollModification(new SpecialCharacterManager(true).drawTileByName("Assassin_Primus"), p2.getID(), 5);
-		handler.rollDice(RollReason.RECRUIT_SPECIAL_CHARACTER, p2.getID(), new SpecialCharacterManager(true).drawTileByName("Assassin_Primus"),3);
-		handler.rollDice(RollReason.RECRUIT_SPECIAL_CHARACTER, p2.getID(), new SpecialCharacterManager(true).drawTileByName("Assassin_Primus"),3);
+		handler.rollDice(new Roll(2,new SpecialCharacterManager(true).drawTileByName("Assassin_Primus"),RollReason.RECRUIT_SPECIAL_CHARACTER, p2.getID(), 3));
 		assertEquals(false,p2.hasCardsInHand());
 		
 		handler.handleSpecialCharacterRollModification(new SpecialCharacterManager(true).drawTileByName("Assassin_Primus"), p2.getID(), 10);
@@ -883,7 +882,7 @@ public class TestGameFlow extends TestingUtils{
 	{
 		turnTwoFirstCombatUpToDetermineDamageRoll();
 
-		getCombatCommandHandler().rollDice(RollReason.CALCULATE_DAMAGE_TO_TILE, p2.getID(), currentState.getCombatHex().getBuilding(),1);
+		getCombatCommandHandler().rollDice(new Roll(1,currentState.getCombatHex().getBuilding(),RollReason.CALCULATE_DAMAGE_TO_TILE, p2.getID(), 1));
 
 		assertEquals(CombatPhase.PLACE_THINGS, currentState.getCurrentCombatPhase());
 		
@@ -992,7 +991,7 @@ public class TestGameFlow extends TestingUtils{
 			assertEquals(false,tp.isFaceUp());
 		}
 
-		getCombatCommandHandler().rollDice(RollReason.EXPLORE_HEX, p3.getID(), currentState.getBoard().getHexByXY(2, 11).getHex(),1);
+		getCombatCommandHandler().rollDice(new Roll(1,currentState.getBoard().getHexByXY(2, 11).getHex(),RollReason.EXPLORE_HEX, p3.getID(),1));
 		assertEquals(4, p3.getOwnedHexes().size());
 		assertEquals(true,p3.getOwnedHexes().contains(currentState.getBoard().getHexByXY(2, 11).getHex()));
 		assertEquals(3,currentState.getBoard().getHexByXY(2, 11).getCreaturesInHex().size());
@@ -1012,11 +1011,11 @@ public class TestGameFlow extends TestingUtils{
 		assertEquals(5,currentState.getCombatHex().getFightingThingsInHex().size());
 		assertEquals(CombatPhase.MELEE_ATTACK, currentState.getCurrentCombatPhase());
 
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Watusi",p1,new Point(2,3)),6);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Cyclops",p1,new Point(2,3)),6);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Keep",p1,new Point(2,3)),6);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Giant_Ape",p4,new Point(2,3)),1);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Buffalo_Herd",p4,new Point(2,3)),1);
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Watusi",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),6));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Cyclops",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),6));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Keep",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),6));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Giant_Ape",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),1));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Buffalo_Herd",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),1));
 
 		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(2,currentState.getHitsOnPlayer(p1.getID()));
@@ -1033,9 +1032,9 @@ public class TestGameFlow extends TestingUtils{
 		getCombatCommandHandler().endPlayerTurn(p1.getID());
 
 		assertEquals(CombatPhase.MELEE_ATTACK, currentState.getCurrentCombatPhase());
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Keep",p1,new Point(2,3)),6);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Giant_Ape",p4,new Point(2,3)),6);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Buffalo_Herd",p4,new Point(2,3)),6);
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Keep",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),6));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Giant_Ape",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),6));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Buffalo_Herd",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),6));
 
 		assertEquals(CombatPhase.ATTACKER_THREE_RETREAT, currentState.getCurrentCombatPhase());
 		getCombatCommandHandler().endPlayerTurn(p4.getID());
@@ -1046,9 +1045,9 @@ public class TestGameFlow extends TestingUtils{
 		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
 		assertEquals(0,currentState.getHitsOnPlayer(p2.getID()));
 
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Keep",p1,new Point(2,3)),6);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Giant_Ape",p4,new Point(2,3)),1);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Buffalo_Herd",p4,new Point(2,3)),6);
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Keep",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),6));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Giant_Ape",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),1));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Buffalo_Herd",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),6));
 
 		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
@@ -1066,9 +1065,9 @@ public class TestGameFlow extends TestingUtils{
 		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
 		assertEquals(0,currentState.getHitsOnPlayer(p2.getID()));
 
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Keep",p1,new Point(2,3)),6);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Giant_Ape",p4,new Point(2,3)),1);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p4.getID(), getPlayerBoardThingByName("Buffalo_Herd",p4,new Point(2,3)),1);
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Keep",p1,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),6));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Giant_Ape",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),1));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Buffalo_Herd",p4,new Point(2,3)),RollReason.ATTACK_WITH_CREATURE, p4.getID(),1));
 
 		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(2,currentState.getHitsOnPlayer(p1.getID()));
@@ -1092,7 +1091,7 @@ public class TestGameFlow extends TestingUtils{
 			}
 		}
 
-		getCombatCommandHandler().rollDice(RollReason.CALCULATE_DAMAGE_TO_TILE, p4.getID(), getPlayerBoardThingByName("Keep",p4,new Point(2,3)),6);
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Keep",p4,new Point(2,3)),RollReason.CALCULATE_DAMAGE_TO_TILE, p4.getID(),6));
 
 		assertEquals(3, p4.getOwnedHexes().size());
 		assertEquals(3, p1.getOwnedHexes().size());
@@ -1131,7 +1130,7 @@ public class TestGameFlow extends TestingUtils{
 			assertEquals(false,tp.isFaceUp());
 		}
 
-		getCombatCommandHandler().rollDice(RollReason.EXPLORE_HEX, p3.getID(), currentState.getBoard().getHexByXY(1, 6).getHex(),6);
+		getCombatCommandHandler().rollDice(new Roll(1,currentState.getBoard().getHexByXY(1, 6).getHex(),RollReason.EXPLORE_HEX, p3.getID(),6));
 		assertEquals(5, p3.getOwnedHexes().size());
 		assertEquals(true,p3.getOwnedHexes().contains(currentState.getBoard().getHexByXY(1, 6).getHex()));
 		assertEquals(3,currentState.getBoard().getHexByXY(1, 6).getCreaturesInHex().size());
@@ -1194,9 +1193,9 @@ public class TestGameFlow extends TestingUtils{
 
 		assertEquals(17,currentState.getCombatHex().getFightingThingsInHex().size());
 		assertEquals(CombatPhase.MAGIC_ATTACK, currentState.getCurrentCombatPhase());
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p2.getID(), getPlayerBoardThingByName("Dervish",p2,new Point(4,5)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Old_Dragon",p1,new Point(4,5)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p2.getID(), getPlayerBoardThingByName("Druid",p2,new Point(4,5)),3);
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Dervish",p2,new Point(4,5)),RollReason.ATTACK_WITH_CREATURE, p2.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Old_Dragon",p1,new Point(4,5)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Druid",p2,new Point(4,5)),RollReason.ATTACK_WITH_CREATURE, p2.getID(),3));
 
 		assertEquals(CombatPhase.APPLY_MAGIC_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
@@ -1211,9 +1210,9 @@ public class TestGameFlow extends TestingUtils{
 		assertEquals(15,currentState.getCombatHex().getFightingThingsInHex().size());
 
 		assertEquals(CombatPhase.RANGED_ATTACK, currentState.getCurrentCombatPhase());
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p2.getID(), getPlayerBoardThingByName("Pterodactyl_Warriors",p2,new Point(4,5)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Giant",p1,new Point(4,5)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Dwarves",p1,new Point(4,5)),3);
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Pterodactyl_Warriors",p2,new Point(4,5)),RollReason.ATTACK_WITH_CREATURE, p2.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Giant",p1,new Point(4,5)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Dwarves",p1,new Point(4,5)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
 
 		assertEquals(CombatPhase.APPLY_RANGED_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
@@ -1224,17 +1223,14 @@ public class TestGameFlow extends TestingUtils{
 		assertEquals(14,currentState.getCombatHex().getFightingThingsInHex().size());
 
 		assertEquals(CombatPhase.MELEE_ATTACK, currentState.getCurrentCombatPhase());
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Elephant",p1,new Point(4,5)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Elephant",p1,new Point(4,5)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Brown_Knight",p1,new Point(4,5)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Brown_Knight",p1,new Point(4,5)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Tower",p1,new Point(4,5)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p2.getID(), getPlayerBoardThingByName("Sandworm",p2,new Point(4,5)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p2.getID(), getPlayerBoardThingByName("Green_Knight",p2,new Point(4,5)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p2.getID(), getPlayerBoardThingByName("Green_Knight",p2,new Point(4,5)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p2.getID(), getPlayerBoardThingByName("Crocodiles",p2,new Point(4,5)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p2.getID(), getPlayerBoardThingByName("Walking_Tree",p2,new Point(4,5)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p2.getID(), getPlayerBoardThingByName("Crawling_Vines",p2,new Point(4,5)),3);
+		getCombatCommandHandler().rollDice(new Roll(2,getPlayerBoardThingByName("Elephant",p1,new Point(4,5)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(2,getPlayerBoardThingByName("Brown_Knight",p1,new Point(4,5)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Tower",p1,new Point(4,5)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Sandworm",p2,new Point(4,5)),RollReason.ATTACK_WITH_CREATURE, p2.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(2,getPlayerBoardThingByName("Green_Knight",p2,new Point(4,5)),RollReason.ATTACK_WITH_CREATURE, p2.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Crocodiles",p2,new Point(4,5)),RollReason.ATTACK_WITH_CREATURE, p2.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Walking_Tree",p2,new Point(4,5)),RollReason.ATTACK_WITH_CREATURE, p2.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Crawling_Vines",p2,new Point(4,5)),RollReason.ATTACK_WITH_CREATURE, p2.getID(),3));
 
 		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(5,currentState.getHitsOnPlayer(p1.getID()));
@@ -1262,8 +1258,8 @@ public class TestGameFlow extends TestingUtils{
 		getCombatCommandHandler().endPlayerTurn(p1.getID());
 		
 		assertEquals(CombatPhase.MAGIC_ATTACK, currentState.getCurrentCombatPhase());
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p1.getID(), getPlayerBoardThingByName("Old_Dragon",p1,new Point(4,5)),3);
-		getCombatCommandHandler().rollDice(RollReason.ATTACK_WITH_CREATURE, p2.getID(), getPlayerBoardThingByName("Druid",p2,new Point(4,5)),3);
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Old_Dragon",p1,new Point(4,5)),RollReason.ATTACK_WITH_CREATURE, p1.getID(),3));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Druid",p2,new Point(4,5)),RollReason.ATTACK_WITH_CREATURE, p2.getID(), 3));
 		assertEquals(CombatPhase.APPLY_MAGIC_HITS, currentState.getCurrentCombatPhase());
 
 		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
