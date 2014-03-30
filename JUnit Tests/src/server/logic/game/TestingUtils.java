@@ -1,5 +1,6 @@
 package server.logic.game;
 
+import static common.Constants.PUBLIC;
 import static org.junit.Assert.assertEquals;
 
 import java.awt.Point;
@@ -30,7 +31,6 @@ import common.game.LoadResources;
 import common.game.Player;
 import common.game.PlayerInfo;
 import common.game.Roll;
-import static common.Constants.PUBLIC;
 
 public abstract class TestingUtils
 {
@@ -84,11 +84,13 @@ public abstract class TestingUtils
 		getCombatCommandHandler().rollDice(new Roll(1,null,RollReason.DETERMINE_PLAYER_ORDER, p2.getID(), 3));
 		getCombatCommandHandler().rollDice(new Roll(1,null,RollReason.DETERMINE_PLAYER_ORDER, p2.getID(), 3));
 		
+		allDoneRolling();
 		assertEquals(SetupPhase.DETERMINE_PLAYER_ORDER, currentState.getCurrentSetupPhase());
 		getCombatCommandHandler().rollDice(new Roll(2,null,RollReason.DETERMINE_PLAYER_ORDER, p2.getID(), 3));
 		getCombatCommandHandler().rollDice(new Roll(1,null,RollReason.DETERMINE_PLAYER_ORDER, p1.getID(), 3));
 		getCombatCommandHandler().rollDice(new Roll(1,null,RollReason.DETERMINE_PLAYER_ORDER, p1.getID(), 4));
-		
+
+		allDoneRolling();
 		assertEquals(SetupPhase.PICK_FIRST_HEX, currentState.getCurrentSetupPhase());
 		assertEquals(p3.getID(),currentState.getPlayerOrder().get(0).intValue());
 		assertEquals(p1.getID(),currentState.getPlayerOrder().get(1).intValue());
@@ -202,6 +204,22 @@ public abstract class TestingUtils
 	protected Player getPlayerAtIndex(int index)
 	{
 		return currentState.getPlayerByPlayerNumber(currentState.getPlayerOrder().get(index));
+	}
+	
+	protected void allDoneRolling()
+	{
+		DoneRollingCommand c1 = new DoneRollingCommand();
+		DoneRollingCommand c2 = new DoneRollingCommand();
+		DoneRollingCommand c3 = new DoneRollingCommand();
+		DoneRollingCommand c4 = new DoneRollingCommand();
+		c1.setID(p1.getID());
+		c2.setID(p2.getID());
+		c3.setID(p3.getID());
+		c4.setID(p4.getID());
+		getSetupPhaseCommandHandler().receiveDoneRolling(c1);
+		getSetupPhaseCommandHandler().receiveDoneRolling(c2);
+		getSetupPhaseCommandHandler().receiveDoneRolling(c3);
+		getSetupPhaseCommandHandler().receiveDoneRolling(c4);
 	}
 	
 	private class StartGameReceiver extends AbstractUpdateReceiver<GameStarted>{

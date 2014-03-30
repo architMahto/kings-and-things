@@ -302,6 +302,7 @@ public class TestIndependantStates extends TestingUtils
 		assertEquals(CombatPhase.MAGIC_ATTACK, currentState.getCurrentCombatPhase());
 
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Genie",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 4));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_MAGIC_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
@@ -318,6 +319,7 @@ public class TestIndependantStates extends TestingUtils
 		assertEquals(CombatPhase.RANGED_ATTACK, currentState.getCurrentCombatPhase());
 
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Greathunter",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 4));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_RANGED_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
@@ -336,6 +338,7 @@ public class TestIndependantStates extends TestingUtils
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Crawling_Vines",p2,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p2.getID(), 8));
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Camel_Corps",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 1));
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Giant_Ape",p4,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p4.getID(), 2));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
@@ -358,6 +361,7 @@ public class TestIndependantStates extends TestingUtils
 
 		assertEquals(CombatPhase.MAGIC_ATTACK, currentState.getCurrentCombatPhase());
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Genie",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 4));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_MAGIC_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
@@ -489,6 +493,7 @@ public class TestIndependantStates extends TestingUtils
 		assertEquals(CombatPhase.MAGIC_ATTACK, currentState.getCurrentCombatPhase());
 
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Genie",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 4));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_MAGIC_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
@@ -505,6 +510,7 @@ public class TestIndependantStates extends TestingUtils
 		assertEquals(CombatPhase.RANGED_ATTACK, currentState.getCurrentCombatPhase());
 
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Greathunter",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 4));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_RANGED_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
@@ -523,6 +529,7 @@ public class TestIndependantStates extends TestingUtils
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Crawling_Vines",p2,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p2.getID(), 8));
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Camel_Corps",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 1));
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Giant_Ape",p4,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p4.getID(), 2));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
@@ -545,6 +552,7 @@ public class TestIndependantStates extends TestingUtils
 
 		assertEquals(CombatPhase.MAGIC_ATTACK, currentState.getCurrentCombatPhase());
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Genie",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 4));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_MAGIC_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
@@ -624,6 +632,7 @@ public class TestIndependantStates extends TestingUtils
 
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Old_Dragon",p1,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p1.getID(), 3));
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Genie",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 4));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_MAGIC_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
@@ -642,6 +651,7 @@ public class TestIndependantStates extends TestingUtils
 
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Giant",p1,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p1.getID(), 3));
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Greathunter",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 4));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_RANGED_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
@@ -664,6 +674,7 @@ public class TestIndependantStates extends TestingUtils
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Brown_Knight",p1,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p1.getID(), 3));
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Crawling_Vines",p2,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p2.getID(), 1));
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Camel_Corps",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 1));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
@@ -689,6 +700,7 @@ public class TestIndependantStates extends TestingUtils
 		assertEquals(CombatPhase.MAGIC_ATTACK, currentState.getCurrentCombatPhase());
 
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Genie",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 4));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_MAGIC_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
@@ -764,6 +776,7 @@ public class TestIndependantStates extends TestingUtils
 
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Old_Dragon",p1,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p1.getID(), 3));
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Genie",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 4));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_MAGIC_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
@@ -782,6 +795,7 @@ public class TestIndependantStates extends TestingUtils
 
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Giant",p1,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p1.getID(), 3));
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Greathunter",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 4));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_RANGED_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
@@ -805,6 +819,7 @@ public class TestIndependantStates extends TestingUtils
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Crawling_Vines",p2,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p2.getID(), 8));
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Camel_Corps",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 1));
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Giant_Ape",p4,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p4.getID(), 2));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
@@ -837,6 +852,7 @@ public class TestIndependantStates extends TestingUtils
 		assertEquals(CombatPhase.MAGIC_ATTACK, currentState.getCurrentCombatPhase());
 
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Genie",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 4));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_MAGIC_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
@@ -853,6 +869,7 @@ public class TestIndependantStates extends TestingUtils
 		assertEquals(CombatPhase.MELEE_ATTACK, currentState.getCurrentCombatPhase());
 
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Giant_Ape",p4,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p4.getID(), 2));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
@@ -875,6 +892,7 @@ public class TestIndependantStates extends TestingUtils
 		assertEquals(CombatPhase.MAGIC_ATTACK, currentState.getCurrentCombatPhase());
 
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Genie",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 4));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_MAGIC_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
@@ -951,6 +969,7 @@ public class TestIndependantStates extends TestingUtils
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Genie",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 4));
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Witch_Doctor",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 1));
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Dark_Wizard",p4,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p4.getID(), 4));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_MAGIC_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(2,currentState.getHitsOnPlayer(p1.getID()));
@@ -974,6 +993,7 @@ public class TestIndependantStates extends TestingUtils
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Dwarves",p1,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p1.getID(), 2));
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Pterodactyl_Warriors",p2,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p2.getID(), 2));
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Greathunter",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 4));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_RANGED_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(1,currentState.getHitsOnPlayer(p1.getID()));
@@ -1021,6 +1041,7 @@ public class TestIndependantStates extends TestingUtils
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Giant_Ape",p4,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p4.getID(), 2));
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Buffalo_Herd",p4,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p4.getID(), 2));
 		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Vampire_Bat",p4,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p4.getID(), 8));
+		allDoneRolling();
 
 		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
 		assertEquals(3,currentState.getHitsOnPlayer(p1.getID()));
