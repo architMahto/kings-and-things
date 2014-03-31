@@ -871,7 +871,7 @@ public class TestGameFlow extends TestingUtils{
 		
 		RecruitSpecialCharacterCommandHandler handler = getSpecialCharRecruitHandler();
 		handler.handleSpecialCharacterRollModification(new SpecialCharacterManager(true).drawTileByName("Assassin_Primus"), p2.getID(), 5);
-		handler.rollDice(new Roll(2,new SpecialCharacterManager(true).drawTileByName("Assassin_Primus"),RollReason.RECRUIT_SPECIAL_CHARACTER, p2.getID(), 3));
+		handler.rollDice(new Roll(2,new SpecialCharacterManager(true).drawTileByName("Assassin_Primus"),RollReason.RECRUIT_SPECIAL_CHARACTER, p2.getID(), 6));
 		allDoneRolling();
 		assertEquals(false,p2.hasCardsInHand());
 		
