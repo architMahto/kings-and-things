@@ -399,7 +399,7 @@ public class TestGameFlow extends TestingUtils{
 		
 		for(ITileProperties tp : currentState.getBoard().getHexByXY(3, 2).getCreaturesInHex())
 		{
-			assertEquals(Constants.MAX_MOVE_SPEED - 1,tp.getMoveSpeed());
+			assertEquals(Constants.MAX_MOVE_SPEED - 2,tp.getMoveSpeed());
 		}
 		
 		getMovementCommandHandler().endPlayerTurn(p1.getID());
@@ -565,7 +565,7 @@ public class TestGameFlow extends TestingUtils{
 
 		for(ITileProperties tp : currentState.getBoard().getHexByXY(4, 5).getThingsInHexOwnedByPlayer(p2))
 		{
-			assertEquals(Constants.MAX_MOVE_SPEED - 2,tp.getMoveSpeed());
+			assertEquals(Constants.MAX_MOVE_SPEED - 1,tp.getMoveSpeed());
 		}
 		
 		getMovementCommandHandler().endPlayerTurn(p2.getID());
