@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import server.logic.exceptions.NoMoreTilesException;
+
 import common.Constants.BuildableBuilding;
 import common.Constants.CombatPhase;
 import common.Constants.RegularPhase;
@@ -414,7 +415,185 @@ public class TestIndependantStates extends TestingUtils
 		assertEquals(p1,currentState.getActivePhasePlayer());
 	}
 
-	
+	@Test
+	public void testFourPlayerCombatlastPersonRetreats() throws NoMoreTilesException
+	{
+		ArrayList<ITileProperties> removedThings = new ArrayList<>();
+		ArrayList<ITileProperties> removedCreatures = new ArrayList<>();
+		while(removedCreatures.size() < 8)
+		{
+			ITileProperties thing = currentState.getCup().drawTile();
+			if(thing.isCreature())
+			{
+				removedCreatures.add(thing);
+			}
+			else
+			{
+				removedThings.add(thing);
+			}
+		}
+		
+		for(ITileProperties tp : removedCreatures)
+		{
+			currentState.getBoard().getHexByXY(2, 5).addThingToHex(tp);
+			p1.addOwnedThingOnBoard(tp);
+		}
+		removedCreatures.clear();
+		for(ITileProperties tp : removedThings)
+		{
+			currentState.getCup().reInsertTile(tp);
+		}
+		removedThings.clear();
+		
+		fourPlayerCombatUpToFirstRetreat();
+		
+		getCombatCommandHandler().endPlayerTurn(p2.getID());
+		assertEquals(CombatPhase.ATTACKER_TWO_RETREAT, currentState.getCurrentCombatPhase());
+		getCombatCommandHandler().endPlayerTurn(p3.getID());
+		assertEquals(CombatPhase.ATTACKER_THREE_RETREAT, currentState.getCurrentCombatPhase());
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		
+		assertEquals(CombatPhase.DEFENDER_RETREAT, currentState.getCurrentCombatPhase());
+		assertEquals(4,currentState.getBoard().getHexByXY(3, 6).getThingsInHexOwnedByPlayer(p1).size());
+		getCombatCommandHandler().retreatFromCombat(p1.getID(), currentState.getBoard().getHexByXY(2, 5).getHex());
+		assertEquals(12,currentState.getBoard().getHexByXY(2, 5).getThingsInHexOwnedByPlayer(p1).size());
+		assertEquals(12, p1.getOwnedThingsOnBoard().size());
+
+		assertEquals(CombatPhase.DEFENDER_RETREAT, currentState.getCurrentCombatPhase());
+		assertEquals(true, currentState.hasHexesThatNeedThingsRemoved());
+		assertEquals(2, currentState.getThingsToRemoveFromHex(currentState.getBoard().getHexByXY(2, 5)));
+		
+		HashSet<ITileProperties> thingsToRemove = new HashSet<>();
+		thingsToRemove.add(getPlayerBoardThingByName("Giant", p1, new Point(2,5)));
+		getCombatCommandHandler().removeThingsFromBoard(p1.getID(), currentState.getBoard().getHexByXY(2, 5).getHex(), thingsToRemove);
+
+		
+		assertEquals(11,currentState.getBoard().getHexByXY(2, 5).getThingsInHexOwnedByPlayer(p1).size());
+		assertEquals(11, p1.getOwnedThingsOnBoard().size());
+
+		assertEquals(CombatPhase.DEFENDER_RETREAT, currentState.getCurrentCombatPhase());
+		assertEquals(true, currentState.hasHexesThatNeedThingsRemoved());
+		assertEquals(1, currentState.getThingsToRemoveFromHex(currentState.getBoard().getHexByXY(2, 5)));
+		
+		thingsToRemove.clear();
+		thingsToRemove.add(getPlayerBoardThingByName("Elephant", p1, new Point(2,5)));
+		getCombatCommandHandler().removeThingsFromBoard(p1.getID(), currentState.getBoard().getHexByXY(2, 5).getHex(), thingsToRemove);
+
+		assertEquals(10,currentState.getBoard().getHexByXY(2, 5).getThingsInHexOwnedByPlayer(p1).size());
+		assertEquals(10, p1.getOwnedThingsOnBoard().size());
+		
+		assertEquals(false, currentState.hasHexesThatNeedThingsRemoved());
+		assertEquals(0, currentState.getThingsToRemoveFromHex(currentState.getBoard().getHexByXY(2, 5)));
+		
+		assertEquals(CombatPhase.SELECT_TARGET_PLAYER, currentState.getCurrentCombatPhase());
+		getCombatCommandHandler().setPlayersTarget(p4.getID(), p3.getID());
+		getCombatCommandHandler().setPlayersTarget(p3.getID(), p2.getID());
+		getCombatCommandHandler().setPlayersTarget(p2.getID(), p4.getID());
+
+		assertEquals(CombatPhase.MAGIC_ATTACK, currentState.getCurrentCombatPhase());
+
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Genie",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 4));
+		allDoneRolling();
+
+		assertEquals(CombatPhase.APPLY_MAGIC_HITS, currentState.getCurrentCombatPhase());
+		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
+		assertEquals(1,currentState.getHitsOnPlayer(p2.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p3.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p4.getID()));
+
+		getCombatCommandHandler().applyHits(getPlayerBoardThingByName("Green_Knight",p2,new Point(3, 6)), p2.getID(), 1);
+
+		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p2.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p3.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p4.getID()));
+		assertEquals(CombatPhase.RANGED_ATTACK, currentState.getCurrentCombatPhase());
+
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Greathunter",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 4));
+		allDoneRolling();
+
+		assertEquals(CombatPhase.APPLY_RANGED_HITS, currentState.getCurrentCombatPhase());
+		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
+		assertEquals(1,currentState.getHitsOnPlayer(p2.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p3.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p4.getID()));
+
+		getCombatCommandHandler().applyHits(getPlayerBoardThingByName("Crawling_Vines",p2,new Point(3, 6)), p2.getID(), 1);
+
+		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p2.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p3.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p4.getID()));
+		assertEquals(CombatPhase.MELEE_ATTACK, currentState.getCurrentCombatPhase());
+
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Walking_Tree",p2,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p2.getID(), 6));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Camel_Corps",p3,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p3.getID(), 1));
+		getCombatCommandHandler().rollDice(new Roll(1,getPlayerBoardThingByName("Giant_Ape",p4,new Point(3, 6)),RollReason.ATTACK_WITH_CREATURE, p4.getID(), 2));
+		allDoneRolling();
+
+		assertEquals(CombatPhase.APPLY_MELEE_HITS, currentState.getCurrentCombatPhase());
+		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
+		assertEquals(1,currentState.getHitsOnPlayer(p2.getID()));
+		assertEquals(1,currentState.getHitsOnPlayer(p3.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p4.getID()));
+
+		getCombatCommandHandler().applyHits(getPlayerBoardThingByName("Walking_Tree",p2,new Point(3, 6)), p2.getID(), 1);
+		getCombatCommandHandler().applyHits(getPlayerBoardThingByName("Camel_Corps",p3,new Point(3, 6)), p3.getID(), 1);
+
+		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p2.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p3.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p4.getID()));
+		assertEquals(CombatPhase.ATTACKER_TWO_RETREAT, currentState.getCurrentCombatPhase());
+
+		getCombatCommandHandler().endPlayerTurn(p3.getID());
+		assertEquals(CombatPhase.ATTACKER_THREE_RETREAT, currentState.getCurrentCombatPhase());
+		getCombatCommandHandler().retreatFromCombat(p4.getID(), currentState.getBoard().getHexByXY(2, 7).getHex());
+		assertEquals(CombatPhase.PLACE_THINGS, currentState.getCurrentCombatPhase());
+
+		assertEquals(0,currentState.getHitsOnPlayer(p1.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p2.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p3.getID()));
+		assertEquals(0,currentState.getHitsOnPlayer(p4.getID()));
+
+		assertEquals(2, p1.getOwnedHexes().size());
+		assertEquals(1, p2.getOwnedHexes().size());
+		assertEquals(2, p3.getOwnedHexes().size());
+		assertEquals(2, p4.getOwnedHexes().size());
+		assertEquals(true,p3.getOwnedHexes().contains(currentState.getBoard().getHexByXY(3, 6).getHex()));
+		assertEquals(2,currentState.getBoard().getHexByXY(3, 6).getCreaturesInHex().size());
+		for(ITileProperties thing : currentState.getBoard().getHexByXY(3,6).getThingsInHex())
+		{
+			assertEquals(true,p3.ownsThingOnBoard((thing)));
+			if(thing.isCreature())
+			{
+				assertEquals(false,thing.isFaceUp());
+			}
+		}
+		
+		assertEquals(CombatPhase.PLACE_THINGS, currentState.getCurrentCombatPhase());
+		
+		getCombatCommandHandler().endPlayerTurn(p3.getID());
+		assertEquals(CombatPhase.NO_COMBAT, currentState.getCurrentCombatPhase());
+		assertEquals(RegularPhase.COMBAT, currentState.getCurrentRegularPhase());
+		assertEquals(p2,currentState.getActivePhasePlayer());
+
+		getCombatCommandHandler().endPlayerTurn(p2.getID());
+		assertEquals(CombatPhase.NO_COMBAT, currentState.getCurrentCombatPhase());
+		assertEquals(RegularPhase.COMBAT, currentState.getCurrentRegularPhase());
+		assertEquals(p3,currentState.getActivePhasePlayer());
+
+		getCombatCommandHandler().endPlayerTurn(p3.getID());
+		assertEquals(CombatPhase.NO_COMBAT, currentState.getCurrentCombatPhase());
+		assertEquals(RegularPhase.COMBAT, currentState.getCurrentRegularPhase());
+		assertEquals(p4,currentState.getActivePhasePlayer());
+
+		getCombatCommandHandler().endPlayerTurn(p4.getID());
+		assertEquals(CombatPhase.NO_COMBAT, currentState.getCurrentCombatPhase());
+		assertEquals(RegularPhase.CONSTRUCTION, currentState.getCurrentRegularPhase());
+		assertEquals(p1,currentState.getActivePhasePlayer());
+	}
+
 	@Test
 	public void testFourPlayerCombatDefenderRetreatCreatureOverflow() throws NoMoreTilesException
 	{
@@ -755,6 +934,7 @@ public class TestIndependantStates extends TestingUtils
 	@Test
 	public void testFourPlayerCombat()
 	{
+		
 		fourPlayerCombatUpToFirstRetreat();
 		
 		getCombatCommandHandler().endPlayerTurn(p2.getID());
@@ -948,6 +1128,7 @@ public class TestIndependantStates extends TestingUtils
 	private void fourPlayerCombatUpToFirstRetreat()
 	{
 		getCombatCommandHandler().resolveCombat(currentState.getBoard().getHexByXY(3, 6).getHex(), p1.getID());
+		
 		for(ITileProperties tp : currentState.getCombatHex().getThingsInHex())
 		{
 			assertEquals(true,tp.isFaceUp());
