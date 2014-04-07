@@ -50,7 +50,7 @@ public class TestIndependantStates extends TestingUtils
 		currentState.setCurrentRegularPhase(RegularPhase.MOVEMENT);
 		ITileProperties thing = currentState.getCup().drawTile();
 		ArrayList<ITileProperties> thingsRemoved = new ArrayList<ITileProperties>();
-		while(!thing.isSpecialIncomeCounter())
+		while(!thing.isSpecialIncomeCounter() || thing.getBiomeRestriction() != currentState.getBoard().getHexByXY(1, 2).getHex().getBiomeRestriction())
 		{
 			thingsRemoved.add(thing);
 			thing = currentState.getCup().drawTile();
